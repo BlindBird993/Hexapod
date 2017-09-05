@@ -16,5 +16,7 @@ pip-selfcheck.json
 
 # Setuptools
 /build
+/build3
+
 /dist
 *.eggs
