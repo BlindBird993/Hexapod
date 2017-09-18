@@ -436,7 +436,7 @@ public:
     btTypedConstraint** GetJoints() { return &m_joints[0]; }
     
     
-    void computeConstraints (btVector3 pivotA, btVector3 axisA, btVector3 pivotB, btVector3 axisB, char axis, float limitFrom,
+	void computeConstraints (btVector3& pivotA, btVector3& axisA, btVector3& pivotB, btVector3& axisB, char axis, float limitFrom,
                              float limitTo, int bodyFrom, int bodyTo, int joint )
     {
         
