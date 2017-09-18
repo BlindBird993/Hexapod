@@ -176,7 +176,7 @@ public:
         {
             if (i == 0) {
                 transform.setIdentity();
-                btVector3 vBoneOrigin = btVector3(btScalar(0.), fHeight, -fBodySize.getZ() - fPreLegLength);
+                btVector3 vBoneOrigin = btVector3(btScalar(0.), fHeight, -fBodySize.getZ() - fPreLegLength/2);
                 transform.setOrigin(vBoneOrigin);
                 
                 // 0
@@ -189,7 +189,7 @@ public:
                 transform.setIdentity();
                 btVector3 vLegBoneOrigin = btVector3(btScalar(0.), fHeight, -fBodySize.getZ() - fPreLegLength - fLegLength);
                 transform.setOrigin(vLegBoneOrigin);
-                vAxis = vToBone.cross(vUp);
+                //vAxis = vToBone.cross(vUp);
                 transform.setRotation(btQuaternion(vAxis, M_PI_2));
                 m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
                 
@@ -202,9 +202,9 @@ public:
             if (i == 1) {
                 transform.setIdentity();
                 btVector3 vBoneOrigin = btVector3(
-                                                  -fBodySize.getX() - fPreLegLength* cos(fAngle),
+                                                  -fBodySize.getX() - (fPreLegLength/2)* cos(fAngle),
                                                   fHeight,
-                                                  -fBodySize.getZ() - sin(fAngle)*fPreLegLength);
+                                                  -fBodySize.getZ() - sin(fAngle)*fPreLegLength/2);
                 transform.setOrigin(vBoneOrigin);
                 
                 // 0
@@ -232,7 +232,10 @@ public:
             }
             if (i == 2) {
                 transform.setIdentity();
-                btVector3 vBoneOrigin = btVector3(fBodySize.getX() + fPreLegLength * cos(fAngle), fHeight, -fBodySize.getZ() - sin(fAngle)*fPreLegLength);
+                btVector3 vBoneOrigin = btVector3(
+					fBodySize.getX() + (fPreLegLength / 2) * cos(fAngle),
+					fHeight, 
+					-fBodySize.getZ() - sin(fAngle)*(fPreLegLength / 2));
                 transform.setOrigin(vBoneOrigin);
                 
                 // 0
@@ -262,7 +265,7 @@ public:
             }
             if (i == 3) {
                 transform.setIdentity();
-                btVector3 vBoneOrigin = btVector3(btScalar(0.), fHeight, fBodySize.getZ() + fPreLegLength);
+                btVector3 vBoneOrigin = btVector3(btScalar(0.), fHeight, fBodySize.getZ() + (fPreLegLength / 2));
                 transform.setOrigin(vBoneOrigin);
                 
                 // 0
@@ -286,7 +289,10 @@ public:
             }
             if (i == 4) {
                 transform.setIdentity();
-                btVector3 vBoneOrigin = btVector3(-fBodySize.getX() - fPreLegLength* cos(fAngle), fHeight, fBodySize.getZ() + sin(fAngle)*fPreLegLength);
+                btVector3 vBoneOrigin = btVector3(
+					-fBodySize.getX() - (fPreLegLength / 2)* cos(fAngle), 
+					fHeight, 
+					fBodySize.getZ() + sin(fAngle)*(fPreLegLength / 2));
                 transform.setOrigin(vBoneOrigin);
                 
                 // 0
@@ -317,9 +323,9 @@ public:
             if (i == 5) {
                 transform.setIdentity();
                 btVector3 vBoneOrigin = btVector3(
-                                                  fBodySize.getX() + fPreLegLength* cos(fAngle),
+                                                  fBodySize.getX() + (fPreLegLength / 2)* cos(fAngle),
                                                   fHeight,
-                                                  fBodySize.getZ() + sin(fAngle)*fPreLegLength);
+                                                  fBodySize.getZ() + sin(fAngle)*(fPreLegLength / 2));
                 transform.setOrigin(vBoneOrigin);
                 
                 // 0
@@ -357,7 +363,7 @@ public:
         {
             m_bodies[i]->setDamping(0.05, 0.85);
             m_bodies[i]->setDeactivationTime(0.8);
-            m_bodies[i]->setSleepingThresholds(0.5f, 0.5f);
+            m_bodies[i]->setSleepingThresholds(0.5f, 0.5f);//1.6, 2.5
         }
         
         
@@ -368,29 +374,144 @@ public:
         
         for (i = 0; i<NUM_LEGS; i++)
         {
-            //if (i == 0) {
+           if (i == 0) {
             // hip joints //
             pivotA = btVector3 (btScalar(0.0f), btScalar(0.0f), btScalar(-fBodySize.getZ()));
             axisA = btVector3 (btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
             pivotB = btVector3 (btScalar(0.0f), btScalar(fPreLegLength / 2), btScalar(0.0f));
             axisB = btVector3 (btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
-            computeConstraints(pivotA, axisA, pivotB, axisB, 'z', btScalar(-0.75 * M_PI_4), btScalar(M_PI_8), 0, 1 + 3 * i, 3 * i);
+            computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
             
             // knee joints //
-            pivotA = btVector3 (btScalar(0.0f), btScalar(-fLegLength / 2), btScalar(0.0f));
+            pivotA = btVector3 (btScalar(0.0f), btScalar(-fPreLegLength / 2), btScalar(0.0f));
             axisA = btVector3 (btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
-            pivotB = btVector3 (btScalar(0.0f), btScalar(fForeLegLength / 2), btScalar(0.0f));
+            pivotB = btVector3 (btScalar(0.0f), btScalar(fLegLength / 2), btScalar(0.0f));
             axisB = btVector3 (btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
-            computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(-M_PI_8), btScalar(0.2), 1 + 3 * i, 2 + 3 * i, 1 + 3 * i);
+            computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(0), btScalar(0), 1 + 3 * i, 2 + 3 * i, 1 + 3 * i);
             
             // knee joints2 //
             pivotA = btVector3 (btScalar(0.0f), btScalar(-fLegLength / 2), btScalar(0.0f));
             axisA = btVector3 (btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
             pivotB = btVector3 (btScalar(0.0f), btScalar(fForeLegLength / 2), btScalar(0.0f));
             axisB = btVector3 (btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
-            computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(-M_PI_8), btScalar(0.2), 2 + 3 * i, 3 + 3 * i, 2 + 3 * i);
+            computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(0), btScalar(0), 2 + 3 * i, 3 + 3 * i, 2 + 3 * i);
             
-            //            }
+          }
+		   if (i == 1) {
+			   // hip joints //
+			   pivotA = btVector3(btScalar(-fBodySize.getX()), btScalar(0.0f), btScalar(-fBodySize.getZ()));
+			   axisA = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   pivotB = btVector3(btScalar(0.0f), btScalar(fPreLegLength / 2), btScalar(0.0f));
+			   axisB = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
+
+			   // knee joints //
+			   pivotA = btVector3(btScalar(0.0f), btScalar(-fPreLegLength / 2), btScalar(0.0f));
+			   axisA = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   pivotB = btVector3(btScalar(0.0f), btScalar(fLegLength / 2), btScalar(0.0f));
+			   axisB = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(0), btScalar(0), 1 + 3 * i, 2 + 3 * i, 1 + 3 * i);
+
+			   // knee joints2 //
+			   pivotA = btVector3(btScalar(0.0f), btScalar(-fLegLength / 2), btScalar(0.0f));
+			   axisA = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   pivotB = btVector3(btScalar(0.0f), btScalar(fForeLegLength / 2), btScalar(0.0f));
+			   axisB = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(0), btScalar(0), 2 + 3 * i, 3 + 3 * i, 2 + 3 * i);
+
+		   }
+		   if (i == 2) {
+			   // hip joints //
+			   pivotA = btVector3(btScalar(fBodySize.getX()), btScalar(0.0f), btScalar(-fBodySize.getZ()));
+			   axisA = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   pivotB = btVector3(btScalar(0.0f), btScalar(fPreLegLength / 2), btScalar(0.0f));
+			   axisB = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
+
+			   // knee joints //
+			   pivotA = btVector3(btScalar(0.0f), btScalar(-fPreLegLength / 2), btScalar(0.0f));
+			   axisA = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   pivotB = btVector3(btScalar(0.0f), btScalar(fLegLength / 2), btScalar(0.0f));
+			   axisB = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(0), btScalar(0), 1 + 3 * i, 2 + 3 * i, 1 + 3 * i);
+
+			   // knee joints2 //
+			   pivotA = btVector3(btScalar(0.0f), btScalar(-fLegLength / 2), btScalar(0.0f));
+			   axisA = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   pivotB = btVector3(btScalar(0.0f), btScalar(fForeLegLength / 2), btScalar(0.0f));
+			   axisB = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(0), btScalar(0), 2 + 3 * i, 3 + 3 * i, 2 + 3 * i);
+
+		   }
+		   if (i == 3) {
+			   // hip joints //
+			   pivotA = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(fBodySize.getZ()));
+			   axisA = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   pivotB = btVector3(btScalar(0.0f), btScalar(-fPreLegLength / 2), btScalar(0.0f));
+			   axisB = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
+
+			   // knee joints //
+			   pivotA = btVector3(btScalar(0.0f), btScalar(fPreLegLength / 2), btScalar(0.0f));
+			   axisA = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   pivotB = btVector3(btScalar(0.0f), btScalar(-fLegLength / 2), btScalar(0.0f));
+			   axisB = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(0), btScalar(0), 1 + 3 * i, 2 + 3 * i, 1 + 3 * i);
+
+			   // knee joints2 //
+			   pivotA = btVector3(btScalar(0.0f), btScalar(fLegLength / 2), btScalar(0.0f));
+			   axisA = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   pivotB = btVector3(btScalar(0.0f), btScalar(-fForeLegLength / 2), btScalar(0.0f));
+			   axisB = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(0), btScalar(0), 2 + 3 * i, 3 + 3 * i, 2 + 3 * i);
+
+		   }
+		   if (i == 4) {
+			   // hip joints //
+			   pivotA = btVector3(btScalar(-fBodySize.getX()), btScalar(0.0f), btScalar(fBodySize.getZ()));
+			   axisA = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   pivotB = btVector3(btScalar(0.0f), btScalar(-fPreLegLength / 2), btScalar(0.0f));
+			   axisB = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
+
+			   // knee joints //
+			   pivotA = btVector3(btScalar(0.0f), btScalar(fPreLegLength / 2), btScalar(0.0f));
+			   axisA = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   pivotB = btVector3(btScalar(0.0f), btScalar(-fLegLength / 2), btScalar(0.0f));
+			   axisB = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(0), btScalar(0), 1 + 3 * i, 2 + 3 * i, 1 + 3 * i);
+
+			   // knee joints2 //
+			   pivotA = btVector3(btScalar(0.0f), btScalar(fLegLength / 2), btScalar(0.0f));
+			   axisA = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   pivotB = btVector3(btScalar(0.0f), btScalar(-fForeLegLength / 2), btScalar(0.0f));
+			   axisB = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(0), btScalar(0), 2 + 3 * i, 3 + 3 * i, 2 + 3 * i);
+
+		   }
+		   if (i == 5) {
+			   // hip joints //
+			   pivotA = btVector3(btScalar(fBodySize.getX()), btScalar(0.0f), btScalar(fBodySize.getZ()));
+			   axisA = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   pivotB = btVector3(btScalar(0.0f), btScalar(-fPreLegLength / 2), btScalar(0.0f));
+			   axisB = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
+
+			   // knee joints //
+			   pivotA = btVector3(btScalar(0.0f), btScalar(fPreLegLength / 2), btScalar(0.0f));
+			   axisA = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   pivotB = btVector3(btScalar(0.0f), btScalar(-fLegLength / 2), btScalar(0.0f));
+			   axisB = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(0), btScalar(0), 1 + 3 * i, 2 + 3 * i, 1 + 3 * i);
+
+			   // knee joints2 //
+			   pivotA = btVector3(btScalar(0.0f), btScalar(fLegLength / 2), btScalar(0.0f));
+			   axisA = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   pivotB = btVector3(btScalar(0.0f), btScalar(-fForeLegLength / 2), btScalar(0.0f));
+			   axisB = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+			   computeConstraints(pivotA, axisA, pivotB, axisB, 'y', btScalar(0), btScalar(0), 2 + 3 * i, 3 + 3 * i, 2 + 3 * i);
+
+		   }
             //
             //            if (i == 1) {
             //                         }
