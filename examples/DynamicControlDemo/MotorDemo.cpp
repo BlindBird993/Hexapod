@@ -19,6 +19,9 @@
 #include "LinearMath/btIDebugDraw.h"
 #include "MotorDemo.h"
 
+#include "BulletDynamics/MLCPSolvers/btDantzigSolver.h"
+#include "BulletDynamics/MLCPSolvers/btSolveProjectedGaussSeidel.h"
+#include "BulletDynamics/MLCPSolvers/btMLCPSolver.h"
 
 #include "LinearMath/btAlignedObjectArray.h"
 class btBroadphaseInterface;
@@ -36,6 +39,7 @@ class MotorDemo : public CommonRigidBodyBase
     float m_Time;
     float m_fCyclePeriod; // in milliseconds
     float m_fMuscleStrength;
+    bool useMCLPSolver = true;
     
     btAlignedObjectArray<class TestRig*> m_rigs;
     
@@ -570,7 +574,16 @@ void MotorDemo::initPhysics()
     btVector3 worldAabbMax(10000, 10000, 10000);
     m_broadphase = new btAxisSweep3(worldAabbMin, worldAabbMax);
     
-    m_solver = new btSequentialImpulseConstraintSolver;
+    if (useMCLPSolver)
+    {
+        btDantzigSolver* mlcp = new btDantzigSolver();
+        //btSolveProjectedGaussSeidel* mlcp = new btSolveProjectedGaussSeidel;
+        btMLCPSolver* sol = new btMLCPSolver(mlcp);
+        m_solver = sol;
+    } else
+    {
+        m_solver = new btSequentialImpulseConstraintSolver();
+    }
     
     m_dynamicsWorld = new btDiscreteDynamicsWorld(m_dispatcher, m_broadphase, m_solver, m_collisionConfiguration);
     
