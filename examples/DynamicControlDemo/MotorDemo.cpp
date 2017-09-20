@@ -382,7 +382,7 @@ public:
                 // hip joints //
                 pivotA = btVector3 (btScalar(0.0f), btScalar(0.0f), btScalar(-fBodySize.getZ()));
                 pivotB = btVector3 (btScalar(0.0f), btScalar(fPreLegLength / 2), btScalar(0.0f));
-                computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
+                computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(-0.65), btScalar(0.65), 0, 1 + 3 * i, 3 * i);
                 
                 // knee joints //
                 pivotA = btVector3 (btScalar(0.0f), btScalar(-fPreLegLength / 2), btScalar(0.0f));
@@ -399,7 +399,7 @@ public:
                 // hip joints //
                 pivotA = btVector3(btScalar(-fBodySize.getX()), btScalar(0.0f), btScalar(-fBodySize.getZ()));
                 pivotB = btVector3(btScalar(0.0f), btScalar(fPreLegLength / 2), btScalar(0.0f));
-                computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
+                computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(-0.65), btScalar(0.65), 0, 1 + 3 * i, 3 * i);
                 
                 // knee joints //
                 pivotA = btVector3(btScalar(0.0f), btScalar(-fPreLegLength / 2), btScalar(0.0f));
@@ -416,7 +416,7 @@ public:
                 // hip joints //
                 pivotA = btVector3(btScalar(fBodySize.getX()), btScalar(0.0f), btScalar(-fBodySize.getZ()));
                 pivotB = btVector3(btScalar(0.0f), btScalar(fPreLegLength / 2), btScalar(0.0f));
-                computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
+                computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(-0.65), btScalar(0.65), 0, 1 + 3 * i, 3 * i);
                 
                 // knee joints //
                 pivotA = btVector3(btScalar(0.0f), btScalar(-fPreLegLength / 2), btScalar(0.0f));
@@ -433,7 +433,7 @@ public:
                 // hip joints //
                 pivotA = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(fBodySize.getZ()));
                 pivotB = btVector3(btScalar(0.0f), btScalar(-fPreLegLength / 2), btScalar(0.0f));
-                computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
+                computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0.65), btScalar(-0.65), 0, 1 + 3 * i, 3 * i);
                 
                 // knee joints //
                 pivotA = btVector3(btScalar(0.0f), btScalar(fPreLegLength / 2), btScalar(0.0f));
@@ -450,7 +450,7 @@ public:
                 // hip joints //
                 pivotA = btVector3(btScalar(-fBodySize.getX()), btScalar(0.0f), btScalar(fBodySize.getZ()));
                 pivotB = btVector3(btScalar(0.0f), btScalar(-fPreLegLength / 2), btScalar(0.0f));
-                computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
+                computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0.65), btScalar(-0.65), 0, 1 + 3 * i, 3 * i);
                 
                 // knee joints //
                 pivotA = btVector3(btScalar(0.0f), btScalar(fPreLegLength / 2), btScalar(0.0f));
@@ -467,7 +467,7 @@ public:
                 // hip joints //
                 pivotA = btVector3(btScalar(fBodySize.getX()), btScalar(0.0f), btScalar(fBodySize.getZ()));
                 pivotB = btVector3(btScalar(0.0f), btScalar(-fPreLegLength / 2), btScalar(0.0f));
-                computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
+                computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0.65), btScalar(-0.65), 0, 1 + 3 * i, 3 * i);
                 
                 // knee joints //
                 pivotA = btVector3(btScalar(0.0f), btScalar(fPreLegLength / 2), btScalar(0.0f));
@@ -640,7 +640,7 @@ void MotorDemo::setMotorTargets(btScalar deltaTime)
     //
     for (int r = 0; r<m_rigs.size(); r++)
     {
-        for (int i = 0; i<2 * NUM_LEGS; i++)
+        for (int i = 0; i<3 * NUM_LEGS; i++)
         {
             btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[i]);
             btScalar fCurAngle = hingeC->getHingeAngle();
