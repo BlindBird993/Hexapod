@@ -107,6 +107,16 @@ class TestRig
     btRigidBody*		m_bodies[BODYPART_COUNT];
     btTypedConstraint*	m_joints[JOINT_COUNT];
     
+    btVector3 vUp;
+    
+    // root global
+    btVector3 vRoot;
+    btTransform transform;
+    
+    // Setup rigid bodies global
+    btTransform offset;
+    
+    
     btRigidBody* localCreateRigidBody(btScalar mass, const btTransform& startTransform, btCollisionShape* shape)
     {
         bool isDynamic = (mass != 0.f);
@@ -129,9 +139,7 @@ public:
     TestRig(btDynamicsWorld* ownerWorld, const btVector3& positionOffset, bool bFixed)
     : m_ownerWorld(ownerWorld)
     {
-        btVector3 vUp(0, 1, 0);
-        btVector3 vLeft(1, 0, 0);
-        btVector3 vRight(0, 0, 1);
+        vUp = btVector3(0, 1, 0);
         
         //
         // Setup geometry
@@ -159,12 +167,13 @@ public:
         // Setup rigid bodies
         //
         float fHeight = 0.5;
-        btTransform offset; offset.setIdentity();
+        
+        offset.setIdentity();
         offset.setOrigin(positionOffset);
         
         // root
-        btVector3 vRoot = btVector3(btScalar(0.), btScalar(fHeight), btScalar(0.));
-        btTransform transform;
+        vRoot = btVector3(btScalar(0.), btScalar(fHeight), btScalar(0.));
+        
         transform.setIdentity();
         transform.setOrigin(vRoot);
         if (bFixed)
@@ -179,186 +188,94 @@ public:
         for (i = 0; i < NUM_LEGS; i++)
         {
             if (i == 0) {
-                transform.setIdentity();
-                btVector3 vBoneOrigin = btVector3(btScalar(0.), fHeight, -fBodySize.getZ() - fPreLegLength/2);
-                transform.setOrigin(vBoneOrigin);
                 
-                // 0
-                btVector3 vToBone = (vBoneOrigin - vRoot).normalize();
-                btVector3 vAxis = vToBone.cross(vUp);
-                transform.setRotation(btQuaternion(vAxis, M_PI_2));
-                m_bodies[1 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[1 + 3 * i]);
+                btVector3 origin1 = btVector3(btScalar(0.), fHeight, -fBodySize.getZ() - fPreLegLength/2);
+                setStartPosition(origin1, true, 1 + 3 * i );
                 
-                // 1
-                transform.setIdentity();
-                btVector3 vLegBoneOrigin = btVector3(btScalar(0.), fHeight, -fBodySize.getZ() - fPreLegLength - fLegLength);
-                transform.setOrigin(vLegBoneOrigin);
-                //vAxis = vToBone.cross(vUp);
-                transform.setRotation(btQuaternion(vAxis, M_PI_2));
-                m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
+                btVector3 origin2 = btVector3(btScalar(0.), fHeight, -fBodySize.getZ() - fPreLegLength - fLegLength);
+                setStartPosition(origin2, true, 2 + 3 * i );
                 
-                // 2
-                transform.setIdentity();
-                transform.setOrigin(btVector3(btScalar(0.), fHeight - (fForeLegLength / 2), -fBodySize.getZ() - fPreLegLength - fLegLength - fForeLegLength/2));//(btVector3(btScalar(0.), fHeight - fForeLegLength / 2, -fBodySize.getZ() - fLegLength));
-                m_bodies[3 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[3 + 3 * i]);
-                
+                btVector3 origin3 = btVector3(btScalar(0.), fHeight - (fForeLegLength / 2), -fBodySize.getZ() - fPreLegLength - fLegLength - fForeLegLength/2);
+                setStartPosition(origin3, false, 3 + 3 * i );
             }
+            
             if (i == 1) {
-                transform.setIdentity();
-                btVector3 vBoneOrigin = btVector3(
-                                                  -fBodySize.getX() - (fPreLegLength/2)* cos(fAngle),
-                                                  fHeight,
-                                                  -fBodySize.getZ() - sin(fAngle)*fPreLegLength/2);
-                transform.setOrigin(vBoneOrigin);
                 
-                // 0
-                btVector3 vToBone = (vBoneOrigin - vRoot).normalize();
-                btVector3 vAxis = vToBone.cross(vUp);
-                transform.setRotation(btQuaternion(vAxis, M_PI_2));
-                m_bodies[1 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[1 + 3 * i]);
+                btVector3 origin1 = btVector3(-fBodySize.getX() - (fPreLegLength/2)* cos(fAngle), fHeight, -fBodySize.getZ() - sin(fAngle)*fPreLegLength/2);
+                setStartPosition(origin1, true, 1 + 3 * i );
                 
-                // 1
-                transform.setIdentity();
-                transform.setOrigin(btVector3(
-                                              -fBodySize.getX() - fPreLegLength*cos(fAngle) - fLegLength*cos(fAngle),
-                                              fHeight,
-                                              -fBodySize.getZ() - sin(fAngle)*fPreLegLength - fLegLength*sin(fAngle)
-                                              ));
-                transform.setRotation(btQuaternion(vAxis, M_PI_2));
-                m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
+                btVector3 origin2 = btVector3(-fBodySize.getX() - fPreLegLength*cos(fAngle) - fLegLength*cos(fAngle), fHeight, -fBodySize.getZ() - sin(fAngle)*fPreLegLength - fLegLength*sin(fAngle));
+                setStartPosition(origin2, true, 2 + 3 * i );
                 
-                // 2
-                transform.setIdentity();
-                transform.setOrigin(btVector3(-fBodySize.getX() - fPreLegLength*cos(fAngle) - fLegLength*cos(fAngle) -(fForeLegLength/2)*cos(fAngle),
-                                              fHeight - (fForeLegLength / 2), -fBodySize.getZ() - sin(fAngle)*fPreLegLength - fLegLength*sin(fAngle) - sin(fAngle)*(fForeLegLength/2)));
-                
-                m_bodies[3 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[3 + 3 * i]);
+                btVector3 origin3 =(btVector3(-fBodySize.getX() - fPreLegLength*cos(fAngle) - fLegLength*cos(fAngle) -(fForeLegLength/2)*cos(fAngle),
+                                              fHeight - (fForeLegLength / 2),
+                                              -fBodySize.getZ() - sin(fAngle)*fPreLegLength - fLegLength*sin(fAngle) - sin(fAngle)*(fForeLegLength/2)));
+                setStartPosition(origin3, false, 3 + 3 * i );
             }
+            
             if (i == 2) {
-                transform.setIdentity();
-                btVector3 vBoneOrigin = btVector3(
-                                                  fBodySize.getX() + (fPreLegLength / 2) * cos(fAngle),
-                                                  fHeight,
-                                                  -fBodySize.getZ() - sin(fAngle)*(fPreLegLength / 2));
-                transform.setOrigin(vBoneOrigin);
                 
-                // 0
-                btVector3 vToBone = (vBoneOrigin - vRoot).normalize();
-                btVector3 vAxis = vToBone.cross(vUp);
-                transform.setRotation(btQuaternion(vAxis, M_PI_2));
-                m_bodies[1 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[1 + 3 * i]);
+                btVector3 origin1 = btVector3(fBodySize.getX() + (fPreLegLength / 2) * cos(fAngle), fHeight, -fBodySize.getZ() - sin(fAngle)*(fPreLegLength / 2));
+                setStartPosition(origin1, true, 1 + 3 * i );
                 
-                // 1
-                transform.setIdentity();
-                transform.setOrigin(btVector3(
-                                              fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle),
+                btVector3 origin2 = btVector3( fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle),
                                               fHeight,
-                                              -fBodySize.getZ() -fPreLegLength*sin(fAngle) -fLegLength*sin(fAngle)
-                                              ));
-                transform.setRotation(btQuaternion(vAxis, M_PI_2));
-                m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
+                                              -fBodySize.getZ() -fPreLegLength*sin(fAngle) -fLegLength*sin(fAngle));
+                setStartPosition(origin2, true, 2 + 3 * i );
                 
-                // 2
-                transform.setIdentity();
-                transform.setOrigin(btVector3(
-                                              fBodySize.getX() +fPreLegLength*cos(fAngle) +fLegLength*cos(fAngle) +(fForeLegLength/2)*cos(fAngle),
+                btVector3 origin3 =(btVector3(fBodySize.getX() +fPreLegLength*cos(fAngle) +fLegLength*cos(fAngle) +(fForeLegLength/2)*cos(fAngle),
                                               fHeight - (fForeLegLength / 2),
-                                              -fBodySize.getZ() -fPreLegLength*sin(fAngle) -fLegLength*sin(fAngle) -(fForeLegLength/2)*sin(fAngle)
-                                              ));
-                m_bodies[3 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[3 + 3 * i]);
+                                              -fBodySize.getZ() -fPreLegLength*sin(fAngle) -fLegLength*sin(fAngle) -(fForeLegLength/2)*sin(fAngle)));
+                setStartPosition(origin3, false, 3 + 3 * i );
+                
             }
+            
             if (i == 3) {
-                transform.setIdentity();
-                btVector3 vBoneOrigin = btVector3(btScalar(0.), fHeight, fBodySize.getZ() + (fPreLegLength / 2));
-                transform.setOrigin(vBoneOrigin);
                 
-                // 0
-                btVector3 vToBone = (vBoneOrigin - vRoot).normalize();
-                btVector3 vAxis = vToBone.cross(vUp);
-                transform.setRotation(btQuaternion(vAxis, M_PI_2));
-                m_bodies[1 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[1 + 3 * i]);
+                btVector3 origin1 =  btVector3(btScalar(0.), fHeight, fBodySize.getZ() + (fPreLegLength / 2));
+                setStartPosition(origin1, true, 1 + 3 * i );
                 
-                // 1
-                transform.setIdentity();
-                transform.setOrigin(btVector3(btScalar(0.), fHeight, fBodySize.getZ() + fPreLegLength + fLegLength));
-                transform.setRotation(btQuaternion(vAxis, M_PI_2));
-                m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
+                btVector3 origin2 = btVector3(btScalar(0.), fHeight, fBodySize.getZ() + fPreLegLength + fLegLength);
+                setStartPosition(origin2, true, 2 + 3 * i );
                 
-                // 2
-                transform.setIdentity();
-                transform.setOrigin(btVector3(btScalar(0.), fHeight - (fForeLegLength / 2), fBodySize.getZ() + fPreLegLength + fLegLength + (fForeLegLength / 2)));
-                m_bodies[3 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[3 + 3 * i]);
+                btVector3 origin3 =(btVector3(btScalar(0.), fHeight - (fForeLegLength / 2), fBodySize.getZ() + fPreLegLength + fLegLength + (fForeLegLength / 2)));
+                setStartPosition(origin3, false, 3 + 3 * i );
                 
-                // fHeight - (fForeLegLength / 2), -fBodySize.getZ() - fPreLegLength - fLegLength - fForeLegLength/2)
             }
+            
             if (i == 4) {
-                transform.setIdentity();
-                btVector3 vBoneOrigin = btVector3(
-                                                  -fBodySize.getX() - (fPreLegLength / 2)* cos(fAngle),
-                                                  fHeight,
-                                                  fBodySize.getZ() + sin(fAngle)*(fPreLegLength / 2));
-                transform.setOrigin(vBoneOrigin);
                 
-                // 0
-                btVector3 vToBone = (vBoneOrigin - vRoot).normalize();
-                btVector3 vAxis = vToBone.cross(vUp);
-                transform.setRotation(btQuaternion(vAxis, M_PI_2));
-                m_bodies[1 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[1 + 3 * i]);
+                btVector3 origin1 =  btVector3(-fBodySize.getX() - (fPreLegLength / 2)* cos(fAngle), fHeight, fBodySize.getZ() + sin(fAngle)*(fPreLegLength / 2));
+                setStartPosition(origin1, true, 1 + 3 * i );
                 
-                // 1
-                transform.setIdentity();
-                transform.setOrigin(btVector3(
-                                              -fBodySize.getX() - fPreLegLength*cos(fAngle) - fLegLength*cos(fAngle),
+                btVector3 origin2 = btVector3( -fBodySize.getX() - fPreLegLength*cos(fAngle) - fLegLength*cos(fAngle),
                                               fHeight,
-                                              fBodySize.getZ() + sin(fAngle)*fPreLegLength + sin(fAngle)*fLegLength)
-                                    );
-                transform.setRotation(btQuaternion(vAxis, M_PI_2));
-                m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
+                                              fBodySize.getZ() + sin(fAngle)*fPreLegLength + sin(fAngle)*fLegLength);
+                setStartPosition(origin2, true, 2 + 3 * i );
                 
-                // 2
-                transform.setIdentity();
-                transform.setOrigin(btVector3(
-                                              -fBodySize.getX() - fPreLegLength*cos(fAngle) -fLegLength*cos(fAngle) -(fForeLegLength / 2)*cos(fAngle),
+                btVector3 origin3 =(btVector3(-fBodySize.getX() - fPreLegLength*cos(fAngle) -fLegLength*cos(fAngle) -(fForeLegLength / 2)*cos(fAngle),
                                               fHeight - (fForeLegLength / 2),
-                                              fBodySize.getZ() + fPreLegLength*sin(fAngle) + fLegLength*sin(fAngle) + (fForeLegLength / 2)*sin(fAngle))
-                                    );
-                m_bodies[3 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[3 + 3 * i]);
+                                              fBodySize.getZ() + fPreLegLength*sin(fAngle) + fLegLength*sin(fAngle) + (fForeLegLength / 2)*sin(fAngle)));
+                setStartPosition(origin3, false, 3 + 3 * i );
+                
             }
             if (i == 5) {
-                transform.setIdentity();
-                btVector3 vBoneOrigin = btVector3(
-                                                  fBodySize.getX() + (fPreLegLength / 2)* cos(fAngle),
-                                                  fHeight,
-                                                  fBodySize.getZ() + sin(fAngle)*(fPreLegLength / 2));
-                transform.setOrigin(vBoneOrigin);
                 
-                // 0
-                btVector3 vToBone = (vBoneOrigin - vRoot).normalize();
-                btVector3 vAxis = vToBone.cross(vUp);
-                transform.setRotation(btQuaternion(vAxis, M_PI_2));
-                m_bodies[1 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[1 + 3 * i]);
+                btVector3 origin1 =  btVector3( fBodySize.getX() + (fPreLegLength / 2)* cos(fAngle), fHeight, fBodySize.getZ() + sin(fAngle)*(fPreLegLength / 2));
+                setStartPosition(origin1, true, 1 + 3 * i );
                 
-                // 1
-                transform.setIdentity();
-                transform.setOrigin(btVector3(
-                                              fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle),
-                                              fHeight,
-                                              fBodySize.getZ() + sin(fAngle)*fPreLegLength + sin(fAngle)*fLegLength)
-                                    );
-                transform.setRotation(btQuaternion(vAxis, M_PI_2));
-                m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
+                btVector3 origin2 = btVector3(btVector3(
+                                                        fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle),
+                                                        fHeight,
+                                                        fBodySize.getZ() + sin(fAngle)*fPreLegLength + sin(fAngle)*fLegLength));
+                setStartPosition(origin2, true, 2 + 3 * i );
                 
-                // 2
-                transform.setIdentity();
-                transform.setOrigin(btVector3(
-                                              fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle) + (fForeLegLength / 2)*cos(fAngle),
+                btVector3 origin3 =(btVector3(fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle) + (fForeLegLength / 2)*cos(fAngle),
                                               fHeight - (fForeLegLength / 2),
-                                              fBodySize.getZ() + fPreLegLength*sin(fAngle) + fLegLength*sin(fAngle) + (fForeLegLength / 2)*sin(fAngle))
-                                    );
-                m_bodies[3 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[3 + 3 * i]);
+                                              fBodySize.getZ() + fPreLegLength*sin(fAngle) + fLegLength*sin(fAngle) + (fForeLegLength / 2)*sin(fAngle)));
+                setStartPosition(origin3, false, 3 + 3 * i );
+                
             }
-            
-            
             
         }
         
@@ -535,6 +452,23 @@ public:
         
         return vector;
     }
+    
+    void setStartPosition( btVector3& origin, bool isRotate, int shape)
+    {
+        transform.setIdentity();
+        btVector3 vBoneOrigin = origin;
+        transform.setOrigin(vBoneOrigin);
+        
+        if (isRotate)
+        {
+            btVector3 vToBone = (vBoneOrigin - vRoot).normalize(); //
+            btVector3 vAxis = vToBone.cross(vUp); //
+            transform.setRotation(btQuaternion(vAxis, M_PI_2)); //
+        }
+        
+        m_bodies[shape] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[shape]);
+    }
+    
     
 };
 
