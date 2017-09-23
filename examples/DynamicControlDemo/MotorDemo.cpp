@@ -184,11 +184,14 @@ public:
         {
             m_bodies[0] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[0]);
         }
-        //leg
+        
+        // legs
+        btVector3 pivotA, axisA, pivotB, axisB;
+        
         for (i = 0; i < NUM_LEGS; i++)
         {
             if (i == 0) {
-                
+                // setup start position
                 btVector3 origin1 = btVector3(btScalar(0.), fHeight, -fBodySize.getZ() - fPreLegLength/2);
                 setStartPosition(origin1, true, 1 + 3 * i );
                 
@@ -197,105 +200,8 @@ public:
                 
                 btVector3 origin3 = btVector3(btScalar(0.), fHeight - (fForeLegLength / 2), -fBodySize.getZ() - fPreLegLength - fLegLength - fForeLegLength/2);
                 setStartPosition(origin3, false, 3 + 3 * i );
-            }
-            
-            if (i == 1) {
                 
-                btVector3 origin1 = btVector3(-fBodySize.getX() - (fPreLegLength/2)* cos(fAngle), fHeight, -fBodySize.getZ() - sin(fAngle)*fPreLegLength/2);
-                setStartPosition(origin1, true, 1 + 3 * i );
-                
-                btVector3 origin2 = btVector3(-fBodySize.getX() - fPreLegLength*cos(fAngle) - fLegLength*cos(fAngle), fHeight, -fBodySize.getZ() - sin(fAngle)*fPreLegLength - fLegLength*sin(fAngle));
-                setStartPosition(origin2, true, 2 + 3 * i );
-                
-                btVector3 origin3 =(btVector3(-fBodySize.getX() - fPreLegLength*cos(fAngle) - fLegLength*cos(fAngle) -(fForeLegLength/2)*cos(fAngle),
-                                              fHeight - (fForeLegLength / 2),
-                                              -fBodySize.getZ() - sin(fAngle)*fPreLegLength - fLegLength*sin(fAngle) - sin(fAngle)*(fForeLegLength/2)));
-                setStartPosition(origin3, false, 3 + 3 * i );
-            }
-            
-            if (i == 2) {
-                
-                btVector3 origin1 = btVector3(fBodySize.getX() + (fPreLegLength / 2) * cos(fAngle), fHeight, -fBodySize.getZ() - sin(fAngle)*(fPreLegLength / 2));
-                setStartPosition(origin1, true, 1 + 3 * i );
-                
-                btVector3 origin2 = btVector3( fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle),
-                                              fHeight,
-                                              -fBodySize.getZ() -fPreLegLength*sin(fAngle) -fLegLength*sin(fAngle));
-                setStartPosition(origin2, true, 2 + 3 * i );
-                
-                btVector3 origin3 =(btVector3(fBodySize.getX() +fPreLegLength*cos(fAngle) +fLegLength*cos(fAngle) +(fForeLegLength/2)*cos(fAngle),
-                                              fHeight - (fForeLegLength / 2),
-                                              -fBodySize.getZ() -fPreLegLength*sin(fAngle) -fLegLength*sin(fAngle) -(fForeLegLength/2)*sin(fAngle)));
-                setStartPosition(origin3, false, 3 + 3 * i );
-                
-            }
-            
-            if (i == 3) {
-                
-                btVector3 origin1 =  btVector3(btScalar(0.), fHeight, fBodySize.getZ() + (fPreLegLength / 2));
-                setStartPosition(origin1, true, 1 + 3 * i );
-                
-                btVector3 origin2 = btVector3(btScalar(0.), fHeight, fBodySize.getZ() + fPreLegLength + fLegLength);
-                setStartPosition(origin2, true, 2 + 3 * i );
-                
-                btVector3 origin3 =(btVector3(btScalar(0.), fHeight - (fForeLegLength / 2), fBodySize.getZ() + fPreLegLength + fLegLength + (fForeLegLength / 2)));
-                setStartPosition(origin3, false, 3 + 3 * i );
-                
-            }
-            
-            if (i == 4) {
-                
-                btVector3 origin1 =  btVector3(-fBodySize.getX() - (fPreLegLength / 2)* cos(fAngle), fHeight, fBodySize.getZ() + sin(fAngle)*(fPreLegLength / 2));
-                setStartPosition(origin1, true, 1 + 3 * i );
-                
-                btVector3 origin2 = btVector3( -fBodySize.getX() - fPreLegLength*cos(fAngle) - fLegLength*cos(fAngle),
-                                              fHeight,
-                                              fBodySize.getZ() + sin(fAngle)*fPreLegLength + sin(fAngle)*fLegLength);
-                setStartPosition(origin2, true, 2 + 3 * i );
-                
-                btVector3 origin3 =(btVector3(-fBodySize.getX() - fPreLegLength*cos(fAngle) -fLegLength*cos(fAngle) -(fForeLegLength / 2)*cos(fAngle),
-                                              fHeight - (fForeLegLength / 2),
-                                              fBodySize.getZ() + fPreLegLength*sin(fAngle) + fLegLength*sin(fAngle) + (fForeLegLength / 2)*sin(fAngle)));
-                setStartPosition(origin3, false, 3 + 3 * i );
-                
-            }
-            if (i == 5) {
-                
-                btVector3 origin1 =  btVector3( fBodySize.getX() + (fPreLegLength / 2)* cos(fAngle), fHeight, fBodySize.getZ() + sin(fAngle)*(fPreLegLength / 2));
-                setStartPosition(origin1, true, 1 + 3 * i );
-                
-                btVector3 origin2 = btVector3(btVector3(
-                                                        fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle),
-                                                        fHeight,
-                                                        fBodySize.getZ() + sin(fAngle)*fPreLegLength + sin(fAngle)*fLegLength));
-                setStartPosition(origin2, true, 2 + 3 * i );
-                
-                btVector3 origin3 =(btVector3(fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle) + (fForeLegLength / 2)*cos(fAngle),
-                                              fHeight - (fForeLegLength / 2),
-                                              fBodySize.getZ() + fPreLegLength*sin(fAngle) + fLegLength*sin(fAngle) + (fForeLegLength / 2)*sin(fAngle)));
-                setStartPosition(origin3, false, 3 + 3 * i );
-                
-            }
-            
-        }
-        
-        // Setup some damping on the m_bodies
-        for (i = 0; i < BODYPART_COUNT; ++i)
-        {
-            m_bodies[i]->setDamping(0.05, 0.85);
-            m_bodies[i]->setDeactivationTime(0.8);
-            m_bodies[i]->setSleepingThresholds(0.5f, 0.5f);//1.6, 2.5
-        }
-        
-        
-        //
-        // Setup the constraints
-        //
-        btVector3 pivotA, axisA, pivotB, axisB;
-        
-        for (i = 0; i<NUM_LEGS; i++)
-        {
-            if (i == 0) {
+                // setup constraints
                 // hip joints //
                 pivotA = btVector3 (btScalar(0.0f), btScalar(0.0f), btScalar(-fBodySize.getZ()));
                 pivotB = btVector3 (btScalar(0.0f), btScalar(fPreLegLength / 2), btScalar(0.0f));
@@ -313,6 +219,19 @@ public:
             }
             
             if (i == 1) {
+                // setup start position
+                btVector3 origin1 = btVector3(-fBodySize.getX() - (fPreLegLength/2)* cos(fAngle), fHeight, -fBodySize.getZ() - sin(fAngle)*fPreLegLength/2);
+                setStartPosition(origin1, true, 1 + 3 * i );
+                
+                btVector3 origin2 = btVector3(-fBodySize.getX() - fPreLegLength*cos(fAngle) - fLegLength*cos(fAngle), fHeight, -fBodySize.getZ() - sin(fAngle)*fPreLegLength - fLegLength*sin(fAngle));
+                setStartPosition(origin2, true, 2 + 3 * i );
+                
+                btVector3 origin3 =(btVector3(-fBodySize.getX() - fPreLegLength*cos(fAngle) - fLegLength*cos(fAngle) -(fForeLegLength/2)*cos(fAngle),
+                                              fHeight - (fForeLegLength / 2),
+                                              -fBodySize.getZ() - sin(fAngle)*fPreLegLength - fLegLength*sin(fAngle) - sin(fAngle)*(fForeLegLength/2)));
+                setStartPosition(origin3, false, 3 + 3 * i );
+                
+                // setup constraints
                 // hip joints //
                 pivotA = btVector3(btScalar(-fBodySize.getX()), btScalar(0.0f), btScalar(-fBodySize.getZ()));
                 pivotB = btVector3(btScalar(0.0f), btScalar(fPreLegLength / 2), btScalar(0.0f));
@@ -330,6 +249,21 @@ public:
             }
             
             if (i == 2) {
+                // setup start position
+                btVector3 origin1 = btVector3(fBodySize.getX() + (fPreLegLength / 2) * cos(fAngle), fHeight, -fBodySize.getZ() - sin(fAngle)*(fPreLegLength / 2));
+                setStartPosition(origin1, true, 1 + 3 * i );
+                
+                btVector3 origin2 = btVector3( fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle),
+                                              fHeight,
+                                              -fBodySize.getZ() -fPreLegLength*sin(fAngle) -fLegLength*sin(fAngle));
+                setStartPosition(origin2, true, 2 + 3 * i );
+                
+                btVector3 origin3 =(btVector3(fBodySize.getX() +fPreLegLength*cos(fAngle) +fLegLength*cos(fAngle) +(fForeLegLength/2)*cos(fAngle),
+                                              fHeight - (fForeLegLength / 2),
+                                              -fBodySize.getZ() -fPreLegLength*sin(fAngle) -fLegLength*sin(fAngle) -(fForeLegLength/2)*sin(fAngle)));
+                setStartPosition(origin3, false, 3 + 3 * i );
+                
+                // setup constraints
                 // hip joints //
                 pivotA = btVector3(btScalar(fBodySize.getX()), btScalar(0.0f), btScalar(-fBodySize.getZ()));
                 pivotB = btVector3(btScalar(0.0f), btScalar(fPreLegLength / 2), btScalar(0.0f));
@@ -347,6 +281,17 @@ public:
             }
             
             if (i == 3) {
+                // setup start position
+                btVector3 origin1 =  btVector3(btScalar(0.), fHeight, fBodySize.getZ() + (fPreLegLength / 2));
+                setStartPosition(origin1, true, 1 + 3 * i );
+                
+                btVector3 origin2 = btVector3(btScalar(0.), fHeight, fBodySize.getZ() + fPreLegLength + fLegLength);
+                setStartPosition(origin2, true, 2 + 3 * i );
+                
+                btVector3 origin3 =(btVector3(btScalar(0.), fHeight - (fForeLegLength / 2), fBodySize.getZ() + fPreLegLength + fLegLength + (fForeLegLength / 2)));
+                setStartPosition(origin3, false, 3 + 3 * i );
+                
+                // setup constraints
                 // hip joints //
                 pivotA = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(fBodySize.getZ()));
                 pivotB = btVector3(btScalar(0.0f), btScalar(-fPreLegLength / 2), btScalar(0.0f));
@@ -364,6 +309,21 @@ public:
             }
             
             if (i == 4) {
+                // setup start position
+                btVector3 origin1 =  btVector3(-fBodySize.getX() - (fPreLegLength / 2)* cos(fAngle), fHeight, fBodySize.getZ() + sin(fAngle)*(fPreLegLength / 2));
+                setStartPosition(origin1, true, 1 + 3 * i );
+                
+                btVector3 origin2 = btVector3( -fBodySize.getX() - fPreLegLength*cos(fAngle) - fLegLength*cos(fAngle),
+                                              fHeight,
+                                              fBodySize.getZ() + sin(fAngle)*fPreLegLength + sin(fAngle)*fLegLength);
+                setStartPosition(origin2, true, 2 + 3 * i );
+                
+                btVector3 origin3 =(btVector3(-fBodySize.getX() - fPreLegLength*cos(fAngle) -fLegLength*cos(fAngle) -(fForeLegLength / 2)*cos(fAngle),
+                                              fHeight - (fForeLegLength / 2),
+                                              fBodySize.getZ() + fPreLegLength*sin(fAngle) + fLegLength*sin(fAngle) + (fForeLegLength / 2)*sin(fAngle)));
+                setStartPosition(origin3, false, 3 + 3 * i );
+                
+                // setup constraints
                 // hip joints //
                 pivotA = btVector3(btScalar(-fBodySize.getX()), btScalar(0.0f), btScalar(fBodySize.getZ()));
                 pivotB = btVector3(btScalar(0.0f), btScalar(-fPreLegLength / 2), btScalar(0.0f));
@@ -381,6 +341,22 @@ public:
             }
             
             if (i == 5) {
+                // setup start position
+                btVector3 origin1 =  btVector3( fBodySize.getX() + (fPreLegLength / 2)* cos(fAngle), fHeight, fBodySize.getZ() + sin(fAngle)*(fPreLegLength / 2));
+                setStartPosition(origin1, true, 1 + 3 * i );
+                
+                btVector3 origin2 = btVector3(btVector3(
+                                                        fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle),
+                                                        fHeight,
+                                                        fBodySize.getZ() + sin(fAngle)*fPreLegLength + sin(fAngle)*fLegLength));
+                setStartPosition(origin2, true, 2 + 3 * i );
+                
+                btVector3 origin3 =(btVector3(fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle) + (fForeLegLength / 2)*cos(fAngle),
+                                              fHeight - (fForeLegLength / 2),
+                                              fBodySize.getZ() + fPreLegLength*sin(fAngle) + fLegLength*sin(fAngle) + (fForeLegLength / 2)*sin(fAngle)));
+                setStartPosition(origin3, false, 3 + 3 * i );
+                
+                // setup constraints
                 // hip joints //
                 pivotA = btVector3(btScalar(fBodySize.getX()), btScalar(0.0f), btScalar(fBodySize.getZ()));
                 pivotB = btVector3(btScalar(0.0f), btScalar(-fPreLegLength / 2), btScalar(0.0f));
@@ -396,7 +372,17 @@ public:
                 pivotB = btVector3(btScalar(0.0f), btScalar(-fForeLegLength / 2), btScalar(0.0f));
                 computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 2 + 3 * i, 3 + 3 * i, 2 + 3 * i);
             }
+            
         }
+        
+        // Setup some damping on the m_bodies
+        for (i = 0; i < BODYPART_COUNT; ++i)
+        {
+            m_bodies[i]->setDamping(0.05, 0.85);
+            m_bodies[i]->setDeactivationTime(0.8);
+            m_bodies[i]->setSleepingThresholds(0.5f, 0.5f);//1.6, 2.5
+        }
+        
     }
     
     
@@ -456,12 +442,11 @@ public:
     void setStartPosition( btVector3& origin, bool isRotate, int shape)
     {
         transform.setIdentity();
-        btVector3 vBoneOrigin = origin;
-        transform.setOrigin(vBoneOrigin);
+        transform.setOrigin(origin);
         
         if (isRotate)
         {
-            btVector3 vToBone = (vBoneOrigin - vRoot).normalize(); //
+            btVector3 vToBone = (origin - vRoot).normalize(); //
             btVector3 vAxis = vToBone.cross(vUp); //
             transform.setRotation(btQuaternion(vAxis, M_PI_2)); //
         }
