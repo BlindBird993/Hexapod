@@ -146,7 +146,7 @@ public:
     
     void spawnTestRig(const btVector3& startOffset, bool bFixed);
     
-    //	virtual void keyboardCallback(unsigned char key, int x, int y);
+    //    virtual void keyboardCallback(unsigned char key, int x, int y);
     
     void setMotorTargets(btScalar deltaTime);
     
@@ -188,10 +188,10 @@ public:
 
 class TestRig
 {
-    btDynamicsWorld*	m_ownerWorld;
-    btCollisionShape*	m_shapes[BODYPART_COUNT];
-    btRigidBody*		m_bodies[BODYPART_COUNT];
-    btTypedConstraint*	m_joints[JOINT_COUNT];
+    btDynamicsWorld*    m_ownerWorld;
+    btCollisionShape*    m_shapes[BODYPART_COUNT];
+    btRigidBody*        m_bodies[BODYPART_COUNT];
+    btTypedConstraint*    m_joints[JOINT_COUNT];
     
     btVector3 vUp;
     
@@ -751,7 +751,7 @@ public:
     }
     
     
-    virtual	~TestRig()
+    virtual    ~TestRig()
     {
         int i;
         
@@ -826,9 +826,9 @@ public:
 
 void motorPreTickCallback(btDynamicsWorld *world, btScalar timeStep)
 {
-        MotorDemo* motorDemo = (MotorDemo*)world->getWorldUserInfo();
-        motorDemo->setMotorTargets(timeStep);
-
+    MotorDemo* motorDemo = (MotorDemo*)world->getWorldUserInfo();
+    motorDemo->setMotorTargets(timeStep);
+    
     
 }
 
@@ -843,7 +843,7 @@ void MotorDemo::initPhysics()
     m_Time = 0;
     m_fCyclePeriod = 2000.f; // in milliseconds
     
-    //	m_fMuscleStrength = 0.05f;
+    //    m_fMuscleStrength = 0.05f;
     // new SIMD solver for joints clips accumulated impulse, so the new limits for the motor
     // should be (numberOfsolverIterations * oldLimits)
     // currently solver uses 10 iterations, so:
@@ -892,7 +892,7 @@ void MotorDemo::initPhysics()
     //    spawnTestRig(startOffset, true);
     
     m_guiHelper->autogenerateGraphicsObjects(m_dynamicsWorld);
-
+    
     int joints_1[] = {7,10,4};
     int joints_2[] = {6,9,3};
     
@@ -904,10 +904,10 @@ void MotorDemo::initPhysics()
     
     Limits limits_0( -2 * M_PI/3, -M_PI_4 );
     Limits limits_1( -M_PI_8, M_PI_8 );
-
+    
     Limits limits_array_0[3] = {limits_0, limits_0, limits_0}; // 6 9 3   15 0 12
     Limits limits_array_1[3] = {limits_1, limits_1, limits_1}; // 7 10 4  16 1 13
-
+    
     
     Stage* stage0 = new Stage(joints_1, limits_array_1, Directions::forward, joints_3, limits_array_1, Directions::backward);
     stages.push_back(*stage0);
@@ -928,7 +928,7 @@ void MotorDemo::spawnTestRig(const btVector3& startOffset, bool bFixed)
     m_rigs.push_back(rig);
 }
 
-void	PreStep()
+void    PreStep()
 {
     
 }
@@ -972,173 +972,174 @@ void MotorDemo::setMotorTargets(btScalar deltaTime)
     
     if (time_passed >= 5)
     {
-    for (int r = 0; r<m_rigs.size(); r++)
-    {
-        for (int i = 0; i <3 ; i++)
+        for (int r = 0; r<m_rigs.size(); r++)
         {
-            int current_joint1 = cur_stage.getHinges_1()[i];
-            btScalar current_up_limit1 = cur_stage.getLimits_1()[i].upLimit;
-            btScalar current_low_limit1 = cur_stage.getLimits_1()[i].lowLimit;
-            Directions direction1 = cur_stage.getDirection_1();
-            
-            
-            btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[current_joint1]);
-            btScalar fCurAngle = hingeC->getHingeAngle();
-            btScalar fTargetPercent = (int(m_Time / 1000) % int(m_fCyclePeriod)) / m_fCyclePeriod;
-            btScalar fTargetAngle = 0.5 * (1 + sin(2 * M_PI * fTargetPercent)); // change
-            btScalar fTargetLimitAngle = hingeC->getLowerLimit() + fTargetAngle * (hingeC->getUpperLimit() - hingeC->getLowerLimit());
-            btScalar fAngleError = fTargetLimitAngle - fCurAngle;
-            btScalar fDesiredAngularVel = 1000000.f * fAngleError / ms; //change
-            hingeC->setLimit(current_low_limit1, current_up_limit1);
-            hingeC->enableAngularMotor(true, fDesiredAngularVel*10, m_fMuscleStrength);
-            current_angle1 = hingeC->getHingeAngle();
-            
-            std::cout<<"i = "<<i<<" Current angle1 = "<<current_angle1<<std::endl;
-            
-            
-            if ( direction1==Directions::forward )
+            for (int i = 0; i <3 ; i++)
             {
-                if (current_angle1 >= current_up_limit1 - abs (current_up_limit1/10))
+                int current_joint1 = cur_stage.getHinges_1()[i];
+                btScalar current_up_limit1 = cur_stage.getLimits_1()[i].upLimit;
+                btScalar current_low_limit1 = cur_stage.getLimits_1()[i].lowLimit;
+                Directions direction1 = cur_stage.getDirection_1();
+                
+                
+                btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[current_joint1]);
+                btScalar fCurAngle = hingeC->getHingeAngle();
+                btScalar fTargetPercent = (int(m_Time / 1000) % int(m_fCyclePeriod)) / m_fCyclePeriod;
+                btScalar fTargetAngle = 0.5 * (1 + sin(2 * M_PI * fTargetPercent)); // change
+                btScalar fTargetLimitAngle = hingeC->getLowerLimit() + fTargetAngle * (hingeC->getUpperLimit() - hingeC->getLowerLimit());
+                btScalar fAngleError = fTargetLimitAngle - fCurAngle;
+                btScalar fDesiredAngularVel = 1000000.f * fAngleError / ms; //change
+                hingeC->setLimit(current_low_limit1, current_up_limit1);
+                hingeC->enableAngularMotor(true, fDesiredAngularVel*10, m_fMuscleStrength);
+                current_angle1 = hingeC->getHingeAngle();
+                
+                std::cout<<"i = "<<i<<" Current angle1 = "<<current_angle1<<std::endl;
+                
+                
+                if ( direction1==Directions::forward )
                 {
-                    isfinished_1 = true;
-                    hingeC->setLimit(current_up_limit1, current_up_limit1);
+                    if (current_angle1 >= current_up_limit1 - abs (current_up_limit1/10))
+                    {
+                        isfinished_1 = true;
+                        hingeC->setLimit(current_up_limit1, current_up_limit1);
+                    }
+                    
                 }
+                
+                else
+                {
+                    if (current_angle1 <= current_low_limit1 + abs (current_low_limit1/10))
+                    {
+                        isfinished_1 = true;
+                        hingeC->setLimit(current_low_limit1, current_low_limit1);
+                    }
+                }
+                /////////////////////////////////////////
+                int current_joint2 = cur_stage.getHinges_2()[i];
+                btScalar current_up_limit2 = cur_stage.getLimits_2()[i].upLimit;
+                btScalar current_low_limit2 = cur_stage.getLimits_2()[i].upLimit;
+                Directions direction2 = cur_stage.getDirection_2();
+                
+                btHingeConstraint* hingeC1 = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[current_joint2]);
+                btScalar fCurAngle1 = hingeC1->getHingeAngle();
+                btScalar fTargetPercent1 = (int(m_Time / 1000) % int(m_fCyclePeriod)) / m_fCyclePeriod;
+                btScalar fTargetAngle1 = 0.5 * (1 + sin(2 * M_PI * fTargetPercent1)); // change
+                btScalar fTargetLimitAngle1 = hingeC1->getLowerLimit() + fTargetAngle1 * (hingeC1->getUpperLimit() - hingeC1->getLowerLimit());
+                btScalar fAngleError1 = fTargetLimitAngle1 - fCurAngle1;
+                btScalar fDesiredAngularVel1 = 1000000.f * fAngleError1 / ms; //change
+                hingeC1->setLimit(current_low_limit2, current_up_limit2);
+                hingeC1->enableAngularMotor(true, fDesiredAngularVel1*10, m_fMuscleStrength);
+                current_angle2 = hingeC1->getHingeAngle();
+                
+                std::cout<<"i = "<<i<<" Current angle2 = "<<current_angle2<<std::endl;
+                
+                if ( direction2 == Directions::forward )
+                {
+                    if (current_angle2 >= current_up_limit2 - abs (current_up_limit2/10))
+                    {
+                        isfinished_2 = true;
+                        hingeC1->setLimit(current_up_limit2, current_up_limit2);
+                    }
+                }
+                
+                else
+                {
+                    if (current_angle2 <= current_low_limit2 + abs (current_low_limit2/10))
+                    {
+                        isfinished_2 = true;
+                        hingeC1->setLimit(current_low_limit2, current_low_limit2);
+                    }
+                }
+                //
+                
+                
                 
             }
             
-            else
-            {
-                if (current_angle1 <= current_low_limit1 + abs (current_low_limit1/10))
-                {
-                    isfinished_1 = true;
-                    hingeC->setLimit(current_low_limit1, current_low_limit1);
-                }
-            }
-            /////////////////////////////////////////
-            int current_joint2 = cur_stage.getHinges_2()[i];
-            btScalar current_up_limit2 = cur_stage.getLimits_2()[i].upLimit;
-            btScalar current_low_limit2 = cur_stage.getLimits_2()[i].upLimit;
-            Directions direction2 = cur_stage.getDirection_2();
-
-            btHingeConstraint* hingeC1 = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[current_joint2]);
-            btScalar fCurAngle1 = hingeC1->getHingeAngle();
-            btScalar fTargetPercent1 = (int(m_Time / 1000) % int(m_fCyclePeriod)) / m_fCyclePeriod;
-            btScalar fTargetAngle1 = 0.5 * (1 + sin(2 * M_PI * fTargetPercent1)); // change
-            btScalar fTargetLimitAngle1 = hingeC1->getLowerLimit() + fTargetAngle1 * (hingeC1->getUpperLimit() - hingeC1->getLowerLimit());
-            btScalar fAngleError1 = fTargetLimitAngle1 - fCurAngle1;
-            btScalar fDesiredAngularVel1 = 1000000.f * fAngleError1 / ms; //change
-            hingeC1->setLimit(current_low_limit2, current_up_limit2);
-            hingeC1->enableAngularMotor(true, fDesiredAngularVel1*10, m_fMuscleStrength);
-            current_angle2 = hingeC1->getHingeAngle();
-
-            std::cout<<"i = "<<i<<" Current angle2 = "<<current_angle2<<std::endl;
-
-            if ( direction2 == Directions::forward )
-            {
-                if (current_angle2 >= current_up_limit2 - abs (current_up_limit2/10))
-                {
-                    isfinished_2 = true;
-                    hingeC1->setLimit(current_up_limit2, current_up_limit2);
-                }
-            }
-
-            else
-            {
-                if (current_angle2 <= current_low_limit2 + abs (current_low_limit2/10))
-                {
-                    isfinished_2 = true;
-                    hingeC1->setLimit(current_low_limit2, current_low_limit2);
-                }
-            }
-//
-            
-            
             
         }
-        
-        
-    }
     }
 }
-    
+
 #if 0
-    void MotorDemo::keyboardCallback(unsigned char key, int x, int y)
+void MotorDemo::keyboardCallback(unsigned char key, int x, int y)
+{
+    switch (key)
     {
-        switch (key)
-        {
-            case '+': case '=':
-                m_fCyclePeriod /= 1.1f;
-                if (m_fCyclePeriod < 1.f)
-                    m_fCyclePeriod = 1.f;
-                break;
-            case '-': case '_':
-                m_fCyclePeriod *= 1.1f;
-                break;
-            case '[':
-                m_fMuscleStrength /= 1.1f;
-                break;
-            case ']':
-                m_fMuscleStrength *= 1.1f;
-                break;
-            default:
-                DemoApplication::keyboardCallback(key, x, y);
-        }
+        case '+': case '=':
+            m_fCyclePeriod /= 1.1f;
+            if (m_fCyclePeriod < 1.f)
+                m_fCyclePeriod = 1.f;
+            break;
+        case '-': case '_':
+            m_fCyclePeriod *= 1.1f;
+            break;
+        case '[':
+            m_fMuscleStrength /= 1.1f;
+            break;
+        case ']':
+            m_fMuscleStrength *= 1.1f;
+            break;
+        default:
+            DemoApplication::keyboardCallback(key, x, y);
     }
+}
 #endif
+
+
+
+void MotorDemo::exitPhysics()
+{
     
+    int i;
     
-    
-    void MotorDemo::exitPhysics()
+    for (i = 0; i<m_rigs.size(); i++)
     {
-        
-        int i;
-        
-        for (i = 0; i<m_rigs.size(); i++)
-        {
-            TestRig* rig = m_rigs[i];
-            delete rig;
-        }
-        
-        //cleanup in the reverse order of creation/initialization
-        
-        //remove the rigidbodies from the dynamics world and delete them
-        
-        for (i = m_dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
-        {
-            btCollisionObject* obj = m_dynamicsWorld->getCollisionObjectArray()[i];
-            btRigidBody* body = btRigidBody::upcast(obj);
-            if (body && body->getMotionState())
-            {
-                delete body->getMotionState();
-            }
-            m_dynamicsWorld->removeCollisionObject(obj);
-            delete obj;
-        }
-        
-        //delete collision shapes
-        for (int j = 0; j<m_collisionShapes.size(); j++)
-        {
-            btCollisionShape* shape = m_collisionShapes[j];
-            delete shape;
-        }
-        
-        //delete dynamics world
-        delete m_dynamicsWorld;
-        
-        //delete solver
-        delete m_solver;
-        
-        //delete broadphase
-        delete m_broadphase;
-        
-        //delete dispatcher
-        delete m_dispatcher;
-        
-        delete m_collisionConfiguration;
+        TestRig* rig = m_rigs[i];
+        delete rig;
     }
     
+    //cleanup in the reverse order of creation/initialization
     
-    class CommonExampleInterface*    MotorControlCreateFunc(struct CommonExampleOptions& options)
+    //remove the rigidbodies from the dynamics world and delete them
+    
+    for (i = m_dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
     {
-        return new MotorDemo(options.m_guiHelper);
+        btCollisionObject* obj = m_dynamicsWorld->getCollisionObjectArray()[i];
+        btRigidBody* body = btRigidBody::upcast(obj);
+        if (body && body->getMotionState())
+        {
+            delete body->getMotionState();
+        }
+        m_dynamicsWorld->removeCollisionObject(obj);
+        delete obj;
     }
+    
+    //delete collision shapes
+    for (int j = 0; j<m_collisionShapes.size(); j++)
+    {
+        btCollisionShape* shape = m_collisionShapes[j];
+        delete shape;
+    }
+    
+    //delete dynamics world
+    delete m_dynamicsWorld;
+    
+    //delete solver
+    delete m_solver;
+    
+    //delete broadphase
+    delete m_broadphase;
+    
+    //delete dispatcher
+    delete m_dispatcher;
+    
+    delete m_collisionConfiguration;
+}
+
+
+class CommonExampleInterface*    MotorControlCreateFunc(struct CommonExampleOptions& options)
+{
+    return new MotorDemo(options.m_guiHelper);
+}
+
