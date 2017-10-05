@@ -14,6 +14,8 @@
  */
 
 
+#include <iostream>
+#include <vector>
 #include "btBulletDynamicsCommon.h"
 
 #include "LinearMath/btIDebugDraw.h"
@@ -34,6 +36,50 @@ class btDefaultCollisionConfiguration;
 
 #include "../CommonInterfaces/CommonRigidBodyBase.h"
 
+enum Directions
+{
+    forward,
+    backward
+};
+
+class Stage
+{
+    int  hinges[3] = {};
+    bool isHalf;
+    Directions direction;
+    
+public: Stage (int* hinges, bool isHalf, Directions direction)
+    {
+        for (int i=0; i<3; i++)
+            this->hinges[i]=hinges[i];
+        this->isHalf = isHalf;
+        this->direction = direction;
+    }
+    
+public: Stage (int* hinges, bool isHalf)
+    {
+        for (int i=0; i<3; i++)
+            this->hinges[i]=hinges[i];
+        this->isHalf = isHalf;
+    }
+    
+public: int* getHinges()
+    {
+        return  this->hinges;
+    }
+    
+public: bool getIsHalf()
+    {
+        return this->isHalf;
+    }
+    
+public: Directions getDirection()
+    {
+        return this->direction;
+    }
+    
+};
+
 class MotorDemo : public CommonRigidBodyBase
 {
     float m_Time;
@@ -43,6 +89,10 @@ class MotorDemo : public CommonRigidBodyBase
     
     btAlignedObjectArray<class TestRig*> m_rigs;
     
+    std::vector<Stage> stages;
+    int current_stage;
+    std::vector<Stage> stages2;
+    bool isComeBack = false;
     
 public:
     MotorDemo(struct GUIHelperInterface* helper)
@@ -321,6 +371,7 @@ public:
 				m_ownerWorld->addConstraint(m_joints[3 * i], true);
 				//computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
 				/********************************************************************************************************/
+
                 // knee joints //
                 pivotA4 = btVector3(btScalar(0.0f), btScalar(-fPreLegLength), btScalar(0.0f));
                 pivotB4 = btVector3(btScalar(0.0f), btScalar(fLegLength), btScalar(0.0f));
@@ -395,7 +446,7 @@ public:
 				m_joints[3 * i] = hingeC6;
 				m_ownerWorld->addConstraint(m_joints[3 * i], true);
 				//computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
-                
+             
                 // knee joints //
                 pivotA7 = btVector3(btScalar(0.0f), btScalar(-fPreLegLength), btScalar(0.0f));
                 pivotB7 = btVector3(btScalar(0.0f), btScalar(fLegLength), btScalar(0.0f));
@@ -547,6 +598,7 @@ public:
 				m_ownerWorld->addConstraint(m_joints[3 * i], true);
 				//computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
 				/********************************************************************************************************/
+
                 // knee joints //
                 pivotA13 = btVector3(btScalar(0.0f), btScalar(fPreLegLength), btScalar(0.0f));
                 pivotB13 = btVector3(btScalar(0.0f), btScalar(-fLegLength), btScalar(0.0f));
@@ -613,6 +665,7 @@ public:
 				/********************************************************************************************************/
                 // setup constraints
                 // hip joints //
+//<<<<<<< HEAD
                 pivotA15 = btVector3(btScalar(fBodySize.getX()), btScalar(0.0f), btScalar(fBodySize.getZ()));
                 pivotB15 = btVector3(btScalar(0.0f), btScalar(-fPreLegLength), btScalar(0.0f));
 				btVector3 axisA15 = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));//change sign
@@ -625,6 +678,10 @@ public:
 				m_ownerWorld->addConstraint(m_joints[3 * i], true);
 				//computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
 				/********************************************************************************************************/
+//=======
+
+                
+//>>>>>>> a3924b7a6a9559f559d6468398996c2499e8fe1b
                 // knee joints //
                 pivotA16 = btVector3(btScalar(0.0f), btScalar(fPreLegLength), btScalar(0.0f));
                 pivotB16 = btVector3(btScalar(0.0f), btScalar(-fLegLength), btScalar(0.0f));
@@ -808,6 +865,77 @@ void MotorDemo::initPhysics()
     //    spawnTestRig(startOffset, true);
     
     m_guiHelper->autogenerateGraphicsObjects(m_dynamicsWorld);
+    
+    int stage1_arr[] = {7,10,4};
+    Stage* stage1 = new Stage( stage1_arr, true, Directions::forward);
+    stages.push_back(*stage1);
+    
+    int stage2_arr[] = {8,11,5};
+    Stage* stage2 = new Stage( stage2_arr, true, Directions::forward);
+    stages.push_back(*stage2);
+    
+    int stage3_arr[] = {6,9,3};
+    Stage* stage3 = new Stage( stage3_arr, false);
+    stages.push_back(*stage3);
+    
+    int stage4_arr[] = {8,11,5};
+    Stage* stage4 = new Stage( stage4_arr, true, Directions::backward);
+    stages.push_back(*stage4);
+    
+    int stage5_arr[] = {7,10,4};
+    Stage* stage5 = new Stage( stage5_arr, true, Directions::backward);
+    stages.push_back(*stage5);
+    
+    int stage6_arr[] = {16,1,13};
+    Stage* stage6 = new Stage( stage6_arr, true, Directions::forward);
+    stages.push_back(*stage6);
+    
+    int stage7_arr[] = {17,2,14};
+    Stage* stage7 = new Stage( stage7_arr, true, Directions::forward);
+    stages.push_back(*stage7);
+    
+    int stage8_arr[] = {15,0,12};
+    Stage* stage8 = new Stage( stage8_arr, false);
+    stages.push_back(*stage8);
+    
+    int stage9_arr[] = {17,2,14};
+    Stage* stage9 = new Stage( stage9_arr, true, Directions::backward);
+    stages.push_back(*stage9);
+    
+    int stage10_arr[] = {16,1,13};
+    Stage* stage10 = new Stage( stage10_arr, true, Directions::backward);
+    stages.push_back(*stage10);
+    
+    
+    
+    
+    int stage1_arra[] = {6};
+    Stage* stage1a = new Stage( stage1_arra, false);
+    stages2.push_back(*stage1a);
+    
+    int stage2_arra[] = {15};
+    Stage* stage2a = new Stage( stage2_arra, false);
+    stages2.push_back(*stage2a);
+    
+    int stage3_arra[] = {0};
+    Stage* stage3a = new Stage( stage3_arra, false);
+    stages2.push_back(*stage3a);
+    
+    int stage4_arra[] = {9};
+    Stage* stage4a = new Stage( stage4_arra, false);
+    stages2.push_back(*stage4a);
+    
+    int stage5_arra[] = {3};
+    Stage* stage5a = new Stage( stage5_arra, false);
+    stages2.push_back(*stage5a);
+    
+    int stage6_arra[] = {12};
+    Stage* stage6a = new Stage( stage6_arra, false);
+    stages2.push_back(*stage6a);
+    
+    current_stage = 0;
+    
+    
 }
 
 
@@ -827,7 +955,6 @@ void	PreStep()
 
 void MotorDemo::setMotorTargets(btScalar deltaTime)
 {
-    
     float ms = deltaTime*1000000.;
     float minFPS = 1000000.f / 60.f;
     if (ms > minFPS)
@@ -838,13 +965,60 @@ void MotorDemo::setMotorTargets(btScalar deltaTime)
     //
     // set per-frame sinusoidal position targets using angular motor (hacky?)
     //
+    //    float currentAngles [1] = {};
+    //    float angleLimits [1] = {};
+    
+    if (current_stage >= 6) current_stage = 0;
+    float current_angle;
+    float up_limit;
+    float low_limit;
+    
     for (int r = 0; r<m_rigs.size(); r++)
     {
-        for (int i = 0; i<3 * NUM_LEGS; i++)
+        // for (int i = 0; i <1 /*3 *NUM_LEGS */; i++)
+        // {
+        int current_joint = stages2[current_stage].getHinges()[0];
+        
+        //  std::cout<<"Current joint "<<current_joint<<std::endl;
+        btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[current_joint]);
+        if (current_joint == 6 || current_joint == 0 || current_joint == 3)
         {
-            btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[i]);
-            btScalar fCurAngle = hingeC->getHingeAngle();
+            hingeC->setLimit(-0.45, 0.45);
+        }
+        else
+        {
+            hingeC->setLimit(0.45, -0.45);
+        }
+        
+        btScalar fCurAngle = hingeC->getHingeAngle();
+        btScalar fTargetPercent = (int(m_Time / 1000) % int(m_fCyclePeriod)) / m_fCyclePeriod;
+        btScalar fTargetAngle = 0.5 * (1 + sin(2 * M_PI * fTargetPercent)); // change
+        btScalar fTargetLimitAngle = hingeC->getLowerLimit() + fTargetAngle * (hingeC->getUpperLimit() - hingeC->getLowerLimit());
+        btScalar fAngleError = fTargetLimitAngle - fCurAngle;
+        btScalar fDesiredAngularVel = 1000000.f * fAngleError / ms; //change
+        hingeC->enableAngularMotor(true, fDesiredAngularVel*10, m_fMuscleStrength);
+        
+        current_angle = hingeC->getHingeAngle();
+        low_limit = hingeC->getLowerLimit();
+        up_limit = hingeC->getUpperLimit();
+        
+        //        std::cout<<"Current stage "<<current_stage<<std::endl;
+        //        std::cout<<"Current upper limit "<<hingeC->getUpperLimit()<<std::endl;
+        //        std::cout<<"Current lower limit "<<hingeC->getLowerLimit()<<std::endl;
+        //        std::cout<<"Current angle: "<<hingeC->getHingeAngle()<<std::endl<<std::endl;
+        //  }
+        
+        
+        if (up_limit>0)
+        {
+            if (current_angle >= up_limit-abs (up_limit/10) && !isComeBack)
+            {
+                isComeBack = true;
+                std::cout<<"isComeBack = true"<<std::endl;
+                std::cout<<"Current stage "<<current_stage<<std::endl<<std::endl;
+            }
             
+
             btScalar fTargetPercent = (int(m_Time / 1000) % int(m_fCyclePeriod)) / m_fCyclePeriod;
             btScalar fTargetAngle = 0.5 * (1 + sin(2 * M_PI * fTargetPercent));
             btScalar fTargetLimitAngle = hingeC->getLowerLimit() + fTargetAngle * (hingeC->getUpperLimit() - hingeC->getLowerLimit());
@@ -855,8 +1029,41 @@ void MotorDemo::setMotorTargets(btScalar deltaTime)
 			//if (i == 1) {
 				//std::cout << hingeC->getHingeAngle() << std::endl;
 			//}
+
+            
+            if (current_angle <= low_limit+abs(low_limit/10) && isComeBack)
+            {
+                isComeBack = false;
+                std::cout<<"isComeBack = false"<<std::endl;
+                current_stage++;
+                hingeC->setLimit(0, 0);
+                std::cout<<"Current stage "<<current_stage<<std::endl<<std::endl;
+            }
+
         }
+        
+        
+        else
+        {
+            if (current_angle >= low_limit-abs (low_limit/10) && !isComeBack)
+            {
+                isComeBack = true;
+                std::cout<<"isComeBack = true"<<std::endl;
+                std::cout<<"Current stage "<<current_stage<<std::endl<<std::endl;
+            }
+            
+            if (current_angle <= up_limit+abs (up_limit/10) && isComeBack)
+            {
+                isComeBack = false;
+                std::cout<<"isComeBack = false"<<std::endl;
+                current_stage++;
+                hingeC->setLimit(0, 0);
+                std::cout<<"Current stage "<<current_stage<<std::endl<<std::endl;
+            }
+        }
+        
     }
+    
     
     
 }
