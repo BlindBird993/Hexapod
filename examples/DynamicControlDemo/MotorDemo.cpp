@@ -59,58 +59,39 @@ public: Limits () {}
 
 class Stage
 {
-    int  hinges_1[3] = {};
-    Limits limits_1[3];
-    Directions direction_1;
+    int  hinges[3] = {};
+    Limits limits[3];
+    Directions direction;
     
-    int  hinges_2[3] = {};
-    Limits limits_2[3];
-    Directions direction_2;
+public: Stage () {}
     
-public: Stage (int* hinges_1, Limits* limits_1, Directions direction_1, int* hinges_2, Limits* limits_2, Directions direction_2)
+public: Stage (int* hinges, Limits* limits, Directions direction)
     {
         for (int i=0; i<3; i++)
         {
-            this->hinges_1[i]=hinges_1[i];
-            this->limits_1[i]=limits_1[i];
-            this->hinges_2[i]=hinges_2[i];
-            this->limits_2[i]=limits_2[i];
+            this->hinges[i]=hinges[i];
+            this->limits[i]=limits[i];
+            
         }
-        
-        this->direction_1 = direction_1;
-        this->direction_2 = direction_2;
+        this->direction = direction;
     }
     
-public: int* getHinges_1()
+    
+    
+public: int* getHinges()
     {
-        return  this->hinges_1;
+        return  this->hinges;
     }
     
-public: int* getHinges_2()
+public: Directions getDirection()
     {
-        return  this->hinges_2;
+        return this->direction;
     }
     
-public: Directions getDirection_1()
+public: Limits* getLimits()
     {
-        return this->direction_1;
+        return  this->limits;
     }
-    
-public: Directions getDirection_2()
-    {
-        return this->direction_2;
-    }
-    
-public: Limits* getLimits_1()
-    {
-        return  this->limits_1;
-    }
-    
-public: Limits* getLimits_2()
-    {
-        return  this->limits_2;
-    }
-    
 };
 
 
@@ -123,10 +104,9 @@ class MotorDemo : public CommonRigidBodyBase
     
     btAlignedObjectArray<class TestRig*> m_rigs;
     
-    std::vector<Stage> stages;
+    Stage stages [4][2];
     int current_stage;
-    bool isfinished_1 = false;
-    bool isfinished_2 = false;
+    bool isfinishedStage = false;
     float time_passed = 0;
     
     
@@ -134,6 +114,7 @@ public:
     MotorDemo(struct GUIHelperInterface* helper)
     :CommonRigidBodyBase(helper)
     {
+        
     }
     
     void initPhysics();
@@ -893,30 +874,83 @@ void MotorDemo::initPhysics()
     
     m_guiHelper->autogenerateGraphicsObjects(m_dynamicsWorld);
     
-    int joints_1[] = {7,10,4};
-    int joints_2[] = {6,9,3};
+    int joints_7_10_4[] = {7,10,4};
+    int joints_6_9_3[] = {6,9,3};
     
-    int joints_3[] = {16,1,13};
-    int joints_4[] = {15,0,12};
+    int joints_16_1_13[] = {16,1,13};
+    int joints_15_0_12[] = {15,0,12};
     
-    int joints_5[] = {8,11,5};
-    int joints_6[] = {17,2,14};
+    int joints_8_11_5[] = {8,11,5};
+    int joints_17_2_14[] = {17,2,14};
     
     Limits limits_0( -2 * M_PI/3, -M_PI_4 );
     Limits limits_1( -M_PI_8, M_PI_8 );
     
-    Limits limits_array_0[3] = {limits_0, limits_0, limits_0}; // 6 9 3   15 0 12
-    Limits limits_array_1[3] = {limits_1, limits_1, limits_1}; // 7 10 4  16 1 13
+    //    Limits limits_array_6_9_3__15_0_12[3] = {limits_0, limits_0, limits_0}; // 6 9 3   15 0 12
+    //    Limits limits_array_7_10_4__16_1_13[3] = {limits_1, limits_1, limits_1}; // 7 10 4  16 1 13
+    //
+    //    stages[0][0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::forward);
+    //    stages[0][1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::backward);
+    //
+    //    stages[1][0] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::forward);
+    //    stages[1][1] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::backward);
+    //
+    //    stages[2][0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::backward);
+    //    stages[2][1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::forward);
+    //
+    //    stages[3][0] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::backward);
+    //    stages[3][1] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::forward);
     
     
-    Stage* stage0 = new Stage(joints_1, limits_array_1, Directions::forward, joints_3, limits_array_1, Directions::backward);
-    stages.push_back(*stage0);
-    Stage* stage1 = new Stage(joints_2, limits_array_0, Directions::forward, joints_4, limits_array_0, Directions::backward);
-    stages.push_back(*stage1);
-    Stage* stage2 = new Stage(joints_1, limits_array_1, Directions::backward, joints_3, limits_array_1, Directions::forward);
-    stages.push_back(*stage2);
-    Stage* stage3 = new Stage(joints_2, limits_array_0, Directions::backward, joints_4, limits_array_0, Directions::forward);
-    stages.push_back(*stage3);
+    
+    Limits limits_array_6_9_3__15_0_12[3] = {limits_0, limits_0, limits_0}; // 6 9 3   15 0 12
+    Limits limits_array_7_10_4__16_1_13[3] = {limits_1, limits_1, limits_1}; // 7 10 4  16 1 13
+    
+    stages[0][0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::forward);
+    stages[0][1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::forward);
+    
+    stages[1][0] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::forward);
+    stages[1][1] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::forward);
+    
+    stages[2][0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::backward);
+    stages[2][1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::backward);
+    
+    stages[3][0] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::backward);
+    stages[3][1] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::backward);
+    
+    
+    //
+    //    Stage* stage0 = new Stage(joints_3, limits_array_1, Directions::backward);
+    //    stages.push_back(*stage0);
+    //    Stage* stage1 = new Stage(joints_4, limits_array_0, Directions::backward);
+    //    stages.push_back(*stage1);
+    //    Stage* stage2 = new Stage(joints_3, limits_array_1, Directions::forward);
+    //    stages.push_back(*stage2);
+    //    Stage* stage3 = new Stage(joints_4, limits_array_0, Directions::forward);
+    //    stages.push_back(*stage3);
+    
+    
+    
+    
+    
+    //    Stage* stage8 = new Stage (joints_1, limits_array_1, Directions::forward);
+    //    stages.push_back(*stage8);
+    //    Stage* stage9 = new Stage (joints_2, limits_array_0, Directions::forward);
+    //    stages.push_back(*stage9);
+    
+    //    Stage* stage6 = new Stage (joints_1, limits_array_1, Directions::backward, joints_3, limits_array_1, Directions::forward);
+    //    stages.push_back(*stage6);
+    //    Stage* stage7 = new Stage (joints_2, limits_array_0, Directions::backward, joints_4, limits_array_0, Directions::forward);
+    //    stages.push_back(*stage7);
+    //
+    //    Stage* stage4 = new Stage (joints_1, limits_array_1, Directions::forward, joints_3, limits_array_1, Directions::backward);
+    //    stages.push_back(*stage4);
+    //    Stage* stage5 = new Stage (joints_2, limits_array_0, Directions::forward, joints_4, limits_array_0, Directions::backward);
+    //    stages.push_back(*stage5);
+    //
+    
+    
+    
     
     current_stage = 0;
 }
@@ -949,116 +983,88 @@ void MotorDemo::setMotorTargets(btScalar deltaTime)
     // set per-frame sinusoidal position targets using angular motor (hacky?)
     //
     
+    float current_angle;
     
-    float current_angle1;
-    float current_angle2;
-    
-    Stage cur_stage = stages[current_stage];
-    
-    
-    if (isfinished_1 && isfinished_2)
+    if (isfinishedStage )
     {
         current_stage++;
-        isfinished_1 = false;
-        isfinished_2 = false;
+        isfinishedStage = false;
     }
     
     if (current_stage >= 4) current_stage = 0;
-    
-    std::cout<<"Current stage: "<<current_stage<<std::endl;
     
     
     time_passed += ms/1000000.;
     
     if (time_passed >= 5)
     {
+        std::cout<<std::endl<<"Stage: "<<current_stage<<std::endl;
+        
         for (int r = 0; r<m_rigs.size(); r++)
         {
-            for (int i = 0; i <3 ; i++)
+            bool isFinished[6] = {false, false, false, false, false, false};
+            
+            for (int i = 0; i < 3; i++)
             {
-                int current_joint1 = cur_stage.getHinges_1()[i];
-                btScalar current_up_limit1 = cur_stage.getLimits_1()[i].upLimit;
-                btScalar current_low_limit1 = cur_stage.getLimits_1()[i].lowLimit;
-                Directions direction1 = cur_stage.getDirection_1();
-                
-                
-                btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[current_joint1]);
-                btScalar fCurAngle = hingeC->getHingeAngle();
-                btScalar fTargetPercent = (int(m_Time / 1000) % int(m_fCyclePeriod)) / m_fCyclePeriod;
-                btScalar fTargetAngle = 0.5 * (1 + sin(2 * M_PI * fTargetPercent)); // change
-                btScalar fTargetLimitAngle = hingeC->getLowerLimit() + fTargetAngle * (hingeC->getUpperLimit() - hingeC->getLowerLimit());
-                btScalar fAngleError = fTargetLimitAngle - fCurAngle;
-                btScalar fDesiredAngularVel = 1000000.f * fAngleError / ms; //change
-                hingeC->setLimit(current_low_limit1, current_up_limit1);
-                hingeC->enableAngularMotor(true, fDesiredAngularVel*10, m_fMuscleStrength);
-                current_angle1 = hingeC->getHingeAngle();
-                
-                std::cout<<"i = "<<i<<" Current angle1 = "<<current_angle1<<std::endl;
-                
-                
-                if ( direction1==Directions::forward )
+                for (int j = 0; j < 2; j++)
                 {
-                    if (current_angle1 >= current_up_limit1 - abs (current_up_limit1/10))
+                    int current_joint = stages[current_stage][j].getHinges()[i];
+                    std::cout<<"Joint: "<<current_joint;
+                    btScalar current_up_limit = stages[current_stage][j].getLimits()[i].upLimit;
+                    btScalar current_low_limit = stages[current_stage][j].getLimits()[i].lowLimit;
+                    Directions direction = stages[current_stage][j].getDirection();
+                    
+                    btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[current_joint]);
+                    btScalar fCurAngle = hingeC->getHingeAngle();
+                    btScalar fTargetPercent = (int(m_Time / 1000) % int(m_fCyclePeriod)) / m_fCyclePeriod;
+                    btScalar fTargetAngle = 0.5 * (1 + sin(2 * M_PI * fTargetPercent)); // change
+                    btScalar fTargetLimitAngle = hingeC->getLowerLimit() + fTargetAngle * (hingeC->getUpperLimit() - hingeC->getLowerLimit());
+                    btScalar fAngleError = fTargetLimitAngle - fCurAngle;
+                    btScalar fDesiredAngularVel = 1000000.f * fAngleError / ms; //change
+                    hingeC->setLimit(current_low_limit, current_up_limit);
+                    hingeC->enableAngularMotor(true, fDesiredAngularVel*10, m_fMuscleStrength);
+                    current_angle = hingeC->getHingeAngle();
+                    
+                    if (current_joint<9) std::cout<<" ";
+                    std::cout<<" Angle = "<<current_angle;
+                    std::cout<<" Uplimit = "<<current_up_limit<<" Lowlimit = "<<current_low_limit<<std::endl;
+                    
+                    if ( direction==Directions::forward )
                     {
-                        isfinished_1 = true;
-                        hingeC->setLimit(current_up_limit1, current_up_limit1);
+                        if (current_angle >= current_up_limit - abs (current_up_limit/10))
+                        {
+                            hingeC->setLimit(current_up_limit, current_up_limit);
+                            isFinished[i*2 + j] = true;
+                            
+                        }
+                        
                     }
                     
-                }
-                
-                else
-                {
-                    if (current_angle1 <= current_low_limit1 + abs (current_low_limit1/10))
+                    else
                     {
-                        isfinished_1 = true;
-                        hingeC->setLimit(current_low_limit1, current_low_limit1);
+                        if (current_angle <= current_low_limit + abs (current_low_limit/10))
+                        {
+                            hingeC->setLimit(current_low_limit, current_low_limit);
+                            isFinished[i*2 + j] = true;
+                        }
                     }
-                }
-                /////////////////////////////////////////
-                int current_joint2 = cur_stage.getHinges_2()[i];
-                btScalar current_up_limit2 = cur_stage.getLimits_2()[i].upLimit;
-                btScalar current_low_limit2 = cur_stage.getLimits_2()[i].upLimit;
-                Directions direction2 = cur_stage.getDirection_2();
-                
-                btHingeConstraint* hingeC1 = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[current_joint2]);
-                btScalar fCurAngle1 = hingeC1->getHingeAngle();
-                btScalar fTargetPercent1 = (int(m_Time / 1000) % int(m_fCyclePeriod)) / m_fCyclePeriod;
-                btScalar fTargetAngle1 = 0.5 * (1 + sin(2 * M_PI * fTargetPercent1)); // change
-                btScalar fTargetLimitAngle1 = hingeC1->getLowerLimit() + fTargetAngle1 * (hingeC1->getUpperLimit() - hingeC1->getLowerLimit());
-                btScalar fAngleError1 = fTargetLimitAngle1 - fCurAngle1;
-                btScalar fDesiredAngularVel1 = 1000000.f * fAngleError1 / ms; //change
-                hingeC1->setLimit(current_low_limit2, current_up_limit2);
-                hingeC1->enableAngularMotor(true, fDesiredAngularVel1*10, m_fMuscleStrength);
-                current_angle2 = hingeC1->getHingeAngle();
-                
-                std::cout<<"i = "<<i<<" Current angle2 = "<<current_angle2<<std::endl;
-                
-                if ( direction2 == Directions::forward )
-                {
-                    if (current_angle2 >= current_up_limit2 - abs (current_up_limit2/10))
-                    {
-                        isfinished_2 = true;
-                        hingeC1->setLimit(current_up_limit2, current_up_limit2);
-                    }
-                }
-                
-                else
-                {
-                    if (current_angle2 <= current_low_limit2 + abs (current_low_limit2/10))
-                    {
-                        isfinished_2 = true;
-                        hingeC1->setLimit(current_low_limit2, current_low_limit2);
-                    }
-                }
-                //
-                
-                
-                
+                    
+                    
+                } // j cycle
+            } // i cycle
+            
+            bool checker = true;
+            for (int l = 0; l<6; l++)
+            {
+                if (isFinished[l] == false)
+                    checker = false;
             }
             
+            if (checker) isfinishedStage = true;
             
-        }
-    }
+        } // r cycle
+    } // if time<5 condition
+    
 }
 
 #if 0
