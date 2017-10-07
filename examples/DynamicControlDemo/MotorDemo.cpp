@@ -42,6 +42,7 @@ enum Directions
     backward
 };
 
+
 struct Limits
 {
     btScalar lowLimit;
@@ -57,6 +58,7 @@ public: Limits () {}
     
 };
 
+
 class Stage
 {
     int  hinges[3] = {};
@@ -71,12 +73,10 @@ public: Stage (int* hinges, Limits* limits, Directions direction)
         {
             this->hinges[i]=hinges[i];
             this->limits[i]=limits[i];
-            
         }
+        
         this->direction = direction;
     }
-    
-    
     
 public: int* getHinges()
     {
@@ -263,9 +263,6 @@ public:
         btVector3 pivotA, axisA, pivotB, axisB;
         for (i = 0; i < NUM_LEGS; i++)
         {
-            float NewfAngle = 2 * M_PI * i / 6;//NUM_LEGS;
-            float fSin = sin(NewfAngle);
-            float fCos = cos(NewfAngle);
             
             if (i == 0) {
                 // setup start position
@@ -883,12 +880,12 @@ void MotorDemo::initPhysics()
     int joints_8_11_5[] = {8,11,5};
     int joints_17_2_14[] = {17,2,14};
     
-    Limits limits_0( -2 * M_PI/3, -M_PI_4 );
+    Limits limits_0( -2 * M_PI/3, -M_PI_2 );
     Limits limits_1( -M_PI_8, M_PI_8 );
     
-    //    Limits limits_array_6_9_3__15_0_12[3] = {limits_0, limits_0, limits_0}; // 6 9 3   15 0 12
-    //    Limits limits_array_7_10_4__16_1_13[3] = {limits_1, limits_1, limits_1}; // 7 10 4  16 1 13
-    //
+    Limits limits_array_6_9_3__15_0_12[3] = {limits_0, limits_0, limits_0}; // 6 9 3   15 0 12
+    Limits limits_array_7_10_4__16_1_13[3] = {limits_1, limits_1, limits_1}; // 7 10 4  16 1 13
+    
     //    stages[0][0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::forward);
     //    stages[0][1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::backward);
     //
@@ -902,10 +899,6 @@ void MotorDemo::initPhysics()
     //    stages[3][1] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::forward);
     
     
-    
-    Limits limits_array_6_9_3__15_0_12[3] = {limits_0, limits_0, limits_0}; // 6 9 3   15 0 12
-    Limits limits_array_7_10_4__16_1_13[3] = {limits_1, limits_1, limits_1}; // 7 10 4  16 1 13
-    
     stages[0][0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::forward);
     stages[0][1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::forward);
     
@@ -917,40 +910,6 @@ void MotorDemo::initPhysics()
     
     stages[3][0] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::backward);
     stages[3][1] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::backward);
-    
-    
-    //
-    //    Stage* stage0 = new Stage(joints_3, limits_array_1, Directions::backward);
-    //    stages.push_back(*stage0);
-    //    Stage* stage1 = new Stage(joints_4, limits_array_0, Directions::backward);
-    //    stages.push_back(*stage1);
-    //    Stage* stage2 = new Stage(joints_3, limits_array_1, Directions::forward);
-    //    stages.push_back(*stage2);
-    //    Stage* stage3 = new Stage(joints_4, limits_array_0, Directions::forward);
-    //    stages.push_back(*stage3);
-    
-    
-    
-    
-    
-    //    Stage* stage8 = new Stage (joints_1, limits_array_1, Directions::forward);
-    //    stages.push_back(*stage8);
-    //    Stage* stage9 = new Stage (joints_2, limits_array_0, Directions::forward);
-    //    stages.push_back(*stage9);
-    
-    //    Stage* stage6 = new Stage (joints_1, limits_array_1, Directions::backward, joints_3, limits_array_1, Directions::forward);
-    //    stages.push_back(*stage6);
-    //    Stage* stage7 = new Stage (joints_2, limits_array_0, Directions::backward, joints_4, limits_array_0, Directions::forward);
-    //    stages.push_back(*stage7);
-    //
-    //    Stage* stage4 = new Stage (joints_1, limits_array_1, Directions::forward, joints_3, limits_array_1, Directions::backward);
-    //    stages.push_back(*stage4);
-    //    Stage* stage5 = new Stage (joints_2, limits_array_0, Directions::forward, joints_4, limits_array_0, Directions::backward);
-    //    stages.push_back(*stage5);
-    //
-    
-    
-    
     
     current_stage = 0;
 }
@@ -966,8 +925,6 @@ void    PreStep()
 {
     
 }
-
-
 
 
 void MotorDemo::setMotorTargets(btScalar deltaTime)
