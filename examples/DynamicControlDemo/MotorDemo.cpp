@@ -895,10 +895,10 @@ void MotorDemo::initPhysics()
     
     stages[4] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::forward);
     stages[5] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::backward);
-
+    
     stages[6] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::backward);
     stages[7] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::forward);
-
+    
     current_stage = 0;
 }
 
@@ -941,7 +941,21 @@ void MotorDemo::setMotorTargets(btScalar deltaTime)
     
     time_passed += ms/1000000.;
     
-    if (time_passed >= 5)
+    if (time_passed >= 5 && time_passed <=6 )
+    {
+        for (int r = 0; r<m_rigs.size(); r++)
+        {
+            for (int i=1; i<16; i+=3)
+            {
+                btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[i]);
+                hingeC->setLimit(M_PI_8, M_PI_8);
+            } // i cycle
+        } // r cycle
+        
+    } // if condition
+    
+    else if (time_passed >= 6)
+        
     {
         std::cout<<std::endl<<"Stage: "<<current_stage<<std::endl;
         
