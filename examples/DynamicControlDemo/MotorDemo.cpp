@@ -890,28 +890,15 @@ void MotorDemo::initPhysics()
     stages[0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::forward);
     stages[1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::backward);
     
-    stages[2] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::forward);
-    stages[3] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::backward);
+    stages[2] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::backward);
+    stages[3] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::forward);
     
-    stages[4] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::backward);
-    stages[5] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::forward);
-    
+    stages[4] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::forward);
+    stages[5] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::backward);
+
     stages[6] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::backward);
     stages[7] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::forward);
-    
-    
-    //    stages[0][0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::forward);
-    //    stages[0][1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::forward);
-    //
-    //    stages[1][0] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::forward);
-    //    stages[1][1] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::forward);
-    //
-    //    stages[2][0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::backward);
-    //    stages[2][1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::backward);
-    //
-    //    stages[3][0] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::backward);
-    //    stages[3][1] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::backward);
-    
+
     current_stage = 0;
 }
 
