@@ -39,7 +39,8 @@ class btDefaultCollisionConfiguration;
 enum Directions
 {
     forward,
-    backward
+    backward,
+    standby
 };
 
 
@@ -104,11 +105,13 @@ class MotorDemo : public CommonRigidBodyBase
     
     btAlignedObjectArray<class TestRig*> m_rigs;
     
-    Stage stages [8];
+    Stage stagesForward [8];
+    Stage stagesBacward [8];
     bool isFinished[3] = {false, false, false};
     int current_stage;
     bool isfinishedStage = false;
     float time_passed = 0;
+    Directions direction = Directions::standby;
     
     
 public:
@@ -129,6 +132,8 @@ public:
     void spawnTestRig(const btVector3& startOffset, bool bFixed);
     
     //    virtual void keyboardCallback(unsigned char key, int x, int y);
+    virtual void specialKeyboard(int key, int x, int y);
+    virtual bool keyboardCallback(int key, int state);
     
     void setMotorTargets(btScalar deltaTime);
     
@@ -805,9 +810,9 @@ public:
 
 void motorPreTickCallback(btDynamicsWorld *world, btScalar timeStep)
 {
+    
     MotorDemo* motorDemo = (MotorDemo*)world->getWorldUserInfo();
     motorDemo->setMotorTargets(timeStep);
-    
     
 }
 
@@ -883,21 +888,37 @@ void MotorDemo::initPhysics()
     
     Limits limits_0( -2 * M_PI/3, -M_PI_2 );
     Limits limits_1( -M_PI_8, M_PI_8 );
+    Limits limits_2( M_PI_8, -M_PI_8 );
     
     Limits limits_array_6_9_3__15_0_12[3] = {limits_0, limits_0, limits_0}; // 6 9 3   15 0 12
     Limits limits_array_7_10_4__16_1_13[3] = {limits_1, limits_1, limits_1}; // 7 10 4  16 1 13
+    Limits limits_array_7_10_4__16_1_13_backward[3] = {limits_2, limits_2, limits_2}; // 7 10 4  16 1 13
     
-    stages[0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::forward);
-    stages[1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::backward);
+    stagesForward[0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::forward);
+    stagesForward[1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::backward);
     
-    stages[2] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::backward);
-    stages[3] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::forward);
+    stagesForward[2] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::backward);
+    stagesForward[3] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::forward);
     
-    stages[4] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::forward);
-    stages[5] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::backward);
+    stagesForward[4] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::forward);
+    stagesForward[5] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::backward);
     
-    stages[6] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::backward);
-    stages[7] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::forward);
+    stagesForward[6] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::backward);
+    stagesForward[7] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::forward);
+    
+    
+    stagesBacward[0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13_backward, Directions::forward);
+    stagesBacward[1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13_backward, Directions::backward);
+    
+    stagesBacward[2] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::backward);
+    stagesBacward[3] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::forward);
+    
+    stagesBacward[4] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13_backward, Directions::forward);
+    stagesBacward[5] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13_backward, Directions::backward);
+    
+    stagesBacward[6] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::backward);
+    stagesBacward[7] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::forward);
+    
     
     current_stage = 0;
 }
@@ -945,7 +966,7 @@ void MotorDemo::setMotorTargets(btScalar deltaTime)
     {
         for (int r = 0; r<m_rigs.size(); r++)
         {
-            for (int i=1; i<16; i+=3)
+            for (int i=1; i<17; i+=3)
             {
                 btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[i]);
                 hingeC->setLimit(M_PI_8, M_PI_8);
@@ -957,87 +978,100 @@ void MotorDemo::setMotorTargets(btScalar deltaTime)
     else if (time_passed >= 6)
         
     {
-        std::cout<<std::endl<<"Stage: "<<current_stage<<std::endl;
-        
-        for (int r = 0; r<m_rigs.size(); r++)
+        //        std::cout<<std::endl<<"Stage: "<<current_stage<<std::endl;
+        if (direction != Directions::standby)
         {
-            for (int i = 0; i < 3; i++)
-            {
-                int current_joint = stages[current_stage].getHinges()[i];
-                std::cout<<"Joint: "<<current_joint;
-                btScalar current_up_limit = stages[current_stage].getLimits()[i].upLimit;
-                btScalar current_low_limit = stages[current_stage].getLimits()[i].lowLimit;
-                Directions direction = stages[current_stage].getDirection();
-                
-                btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[current_joint]);
-                btScalar fCurAngle = hingeC->getHingeAngle();
-                btScalar fTargetPercent = (int(m_Time / 1000) % int(m_fCyclePeriod)) / m_fCyclePeriod;
-                btScalar fTargetAngle = 0.5 * (1 + sin(2 * M_PI * fTargetPercent)); // change
-                btScalar fTargetLimitAngle = hingeC->getLowerLimit() + fTargetAngle * (hingeC->getUpperLimit() - hingeC->getLowerLimit());
-                btScalar fAngleError = fTargetLimitAngle - fCurAngle;
-                btScalar fDesiredAngularVel = 1000000.f * fAngleError / ms; //change
-                hingeC->setLimit(current_low_limit, current_up_limit);
-                hingeC->enableAngularMotor(true, fDesiredAngularVel, m_fMuscleStrength);
-                current_angle = hingeC->getHingeAngle();
-                
-                if (current_joint<9) std::cout<<" ";
-                std::cout<<" Angle = "<<current_angle;
-                std::cout<<" Uplimit = "<<current_up_limit<<" Lowlimit = "<<current_low_limit<<std::endl;
-                
-                if ( direction==Directions::forward )
-                {
-                    if (current_angle >= current_up_limit - abs (current_up_limit/10))
-                    {
-                        // hingeC->setLimit(current_up_limit, current_up_limit);
-                        isFinished[i] = true;
-                        
-                    }
-                    
-                }
-                
+            Stage stages [8];
+            
+            for (int i=0; i<8; i++)
+                if (direction == Directions::forward)
+                    stages[i] = stagesForward[i];
                 else
-                {
-                    if (current_angle <= current_low_limit + abs (current_low_limit/10))
-                    {
-                        //  hingeC->setLimit(current_low_limit, current_low_limit);
-                        isFinished[i] = true;
-                    }
-                }
-                
-                
-            } // i cycle
+                    stages[i] = stagesBacward[i];
             
-            bool checker = false;
-            for (int l = 0; l<3; l++)
-            {
-                if (isFinished[l] == true)
-                    checker = true;
-            }
             
-            if (checker)
+            for (int r = 0; r<m_rigs.size(); r++)
             {
-                isfinishedStage = true;
-                for (int l = 0; l<3; l++)
+                for (int i = 0; i < 3; i++)
                 {
-                    isFinished[l] = false;
-                    int current_joint = stages[current_stage].getHinges()[l];
-                    btScalar current_up_limit = stages[current_stage].getLimits()[l].upLimit;
-                    btScalar current_low_limit = stages[current_stage].getLimits()[l].lowLimit;
+                    int current_joint = stages[current_stage].getHinges()[i];
+                    //                std::cout<<"Joint: "<<current_joint;
+                    btScalar current_up_limit = stages[current_stage].getLimits()[i].upLimit;
+                    btScalar current_low_limit = stages[current_stage].getLimits()[i].lowLimit;
                     Directions direction = stages[current_stage].getDirection();
                     
                     btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[current_joint]);
-                    if (direction == Directions::forward)
-                        hingeC->setLimit(current_up_limit, current_up_limit);
-                    else
-                        hingeC->setLimit(current_low_limit, current_low_limit);
+                    btScalar fCurAngle = hingeC->getHingeAngle();
+                    btScalar fTargetPercent = (int(m_Time / 1000) % int(m_fCyclePeriod)) / m_fCyclePeriod;
+                    btScalar fTargetAngle = 0.5 * (1 + sin(2 * M_PI * fTargetPercent)); // change
+                    btScalar fTargetLimitAngle = hingeC->getLowerLimit() + fTargetAngle * (hingeC->getUpperLimit() - hingeC->getLowerLimit());
+                    btScalar fAngleError = fTargetLimitAngle - fCurAngle;
+                    btScalar fDesiredAngularVel = 1000000.f * fAngleError / ms; //change
+                    hingeC->setLimit(current_low_limit, current_up_limit);
+                    hingeC->enableAngularMotor(true, fDesiredAngularVel, m_fMuscleStrength);
+                    current_angle = hingeC->getHingeAngle();
                     
+                    //                if (current_joint<9) std::cout<<" ";
+                    //                std::cout<<" Angle = "<<current_angle;
+                    //                std::cout<<" Uplimit = "<<current_up_limit<<" Lowlimit = "<<current_low_limit<<std::endl;
+                    
+                    if ( direction==Directions::forward )
+                    {
+                        if (current_angle >= current_up_limit - abs (current_up_limit/10))
+                        {
+                            // hingeC->setLimit(current_up_limit, current_up_limit);
+                            isFinished[i] = true;
+                            
+                        }
+                        
+                    }
+                    
+                    else
+                    {
+                        if (current_angle <= current_low_limit + abs (current_low_limit/10))
+                        {
+                            //  hingeC->setLimit(current_low_limit, current_low_limit);
+                            isFinished[i] = true;
+                        }
+                    }
+                    
+                    
+                } // i cycle
+                
+                bool checker = false;
+                for (int l = 0; l<3; l++)
+                {
+                    if (isFinished[l] == true)
+                        checker = true;
                 }
-            }
-            
-        } // r cycle
-    } // if time<5 condition
-    
+                
+                if (checker)
+                {
+                    isfinishedStage = true;
+                    for (int l = 0; l<3; l++)
+                    {
+                        isFinished[l] = false;
+                        int current_joint = stages[current_stage].getHinges()[l];
+                        btScalar current_up_limit = stages[current_stage].getLimits()[l].upLimit;
+                        btScalar current_low_limit = stages[current_stage].getLimits()[l].lowLimit;
+                        Directions direction = stages[current_stage].getDirection();
+                        
+                        btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[current_joint]);
+                        if (direction == Directions::forward)
+                            hingeC->setLimit(current_up_limit, current_up_limit);
+                        else
+                            hingeC->setLimit(current_low_limit, current_low_limit);
+                        
+                    }
+                }
+                
+            } // r cycle
+        } // if time<5 condition
+    } // else if (time_passed >= 6)
 }
+
+
+
 
 #if 0
 void MotorDemo::keyboardCallback(unsigned char key, int x, int y)
@@ -1058,13 +1092,105 @@ void MotorDemo::keyboardCallback(unsigned char key, int x, int y)
         case ']':
             m_fMuscleStrength *= 1.1f;
             break;
+        case B3G_UP_ARROW :
+        {
+            std::cout<<"Up "<<std::endl;
+            direction = Directions::forward;
+            handled = true;
+            break;
+        }
+            
+        case B3G_DOWN_ARROW :
+        {
+            std::cout<<"Down "<<std::endl;
+            direction = Directions::backward;
+            handled = true;
+            break;
+        }
         default:
-            DemoApplication::keyboardCallback(key, x, y);
+            // DemoApplication::keyboardCallback(key, x, y);
+            break;
+            
     }
 }
 #endif
 
 
+void MotorDemo::specialKeyboard(int key, int x, int y)
+{
+#if 0
+    if (key==GLUT_KEY_END)
+        return;
+    
+    //    printf("key = %i x=%i y=%i\n",key,x,y);
+    
+    int state;
+    state=glutGetModifiers();
+    if (state )
+    {
+        switch (key)
+        {
+                
+            case GLUT_KEY_UP :
+            {
+                std::cout<<"Up "<<std::endl;
+                direction = Directions::forward;
+                handled = true;
+                break;
+            }
+            case GLUT_KEY_DOWN :
+            {
+                std::cout<<"Down "<<std::endl;
+                direction = Directions::backward;
+                handled = true;
+                break;
+            }
+                
+            default:
+                direction = Directions::standby;
+                DemoApplication::specialKeyboard(key,x,y);
+                break;
+        }
+        
+    }
+    
+    //    glutPostRedisplay();
+    
+#endif
+}
+
+bool MotorDemo::keyboardCallback(int key, int state)
+{
+    bool handled = false;
+    
+    if (state)
+    {
+        switch (key)
+        {
+                
+            case B3G_UP_ARROW :
+            {
+                std::cout<<"Up "<<std::endl;
+                direction = Directions::forward;
+                handled = true;
+                break;
+            }
+            case B3G_DOWN_ARROW :
+            {
+                std::cout<<"Down "<<std::endl;
+                direction = Directions::backward;
+                handled = true;
+                break;
+            }
+            default:
+                direction = Directions::standby;
+                break;
+                
+        }
+    }
+    
+    return handled;
+}
 
 void MotorDemo::exitPhysics()
 {
