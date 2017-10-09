@@ -40,6 +40,8 @@ enum Directions
 {
     forward,
     backward,
+    turnLeft,
+    turnRight,
     standby
 };
 
@@ -107,6 +109,8 @@ class MotorDemo : public CommonRigidBodyBase
     
     Stage stagesForward [8];
     Stage stagesBacward [8];
+    Stage stagesTurningLeft [8];
+    Stage stagesTurningRight [8];
     bool isFinished[3] = {false, false, false};
     int current_stage;
     bool isfinishedStage = false;
@@ -894,31 +898,45 @@ void MotorDemo::initPhysics()
     Limits limits_array_7_10_4__16_1_13[3] = {limits_1, limits_1, limits_1}; // 7 10 4  16 1 13
     Limits limits_array_7_10_4__16_1_13_backward[3] = {limits_2, limits_2, limits_2}; // 7 10 4  16 1 13
     
+    //forward
     stagesForward[0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::forward);
     stagesForward[1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::backward);
-    
     stagesForward[2] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::backward);
     stagesForward[3] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::forward);
-    
     stagesForward[4] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::forward);
     stagesForward[5] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::backward);
-    
     stagesForward[6] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::backward);
     stagesForward[7] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::forward);
     
-    
+    // backward
     stagesBacward[0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13_backward, Directions::forward);
     stagesBacward[1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13_backward, Directions::backward);
-    
     stagesBacward[2] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::backward);
     stagesBacward[3] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::forward);
-    
     stagesBacward[4] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13_backward, Directions::forward);
     stagesBacward[5] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13_backward, Directions::backward);
-    
     stagesBacward[6] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::backward);
     stagesBacward[7] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::forward);
     
+    // turning left
+    stagesTurningLeft[0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13_backward, Directions::forward);
+    stagesTurningLeft[1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::backward);
+    stagesTurningLeft[2] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::backward);
+    stagesTurningLeft[3] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::forward);
+    stagesTurningLeft[4] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, Directions::forward);
+    stagesTurningLeft[5] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13_backward, Directions::backward);
+    stagesTurningLeft[6] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::backward);
+    stagesTurningLeft[7] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::forward);
+    
+    // turning right
+    stagesTurningRight[0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::forward);
+    stagesTurningRight[1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13_backward, Directions::backward);
+    stagesTurningRight[2] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::backward);
+    stagesTurningRight[3] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::forward);
+    stagesTurningRight[4] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13_backward, Directions::forward);
+    stagesTurningRight[5] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, Directions::backward);
+    stagesTurningRight[6] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, Directions::backward);
+    stagesTurningRight[7] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, Directions::forward);
     
     current_stage = 0;
 }
@@ -986,9 +1004,12 @@ void MotorDemo::setMotorTargets(btScalar deltaTime)
             for (int i=0; i<8; i++)
                 if (direction == Directions::forward)
                     stages[i] = stagesForward[i];
-                else
+                else if (direction == Directions::backward)
                     stages[i] = stagesBacward[i];
-            
+                else if (direction == Directions::turnLeft)
+                    stages[i] = stagesTurningLeft[i];
+                else if (direction == Directions::turnRight)
+                    stages[i] = stagesTurningRight[i];
             
             for (int r = 0; r<m_rigs.size(); r++)
             {
@@ -1107,11 +1128,37 @@ void MotorDemo::keyboardCallback(unsigned char key, int x, int y)
             handled = true;
             break;
         }
-        default:
-            // DemoApplication::keyboardCallback(key, x, y);
-            break;
             
+        case B3G_LEFT_ARROW :
+        {
+            std::cout<<"Left "<<std::endl;
+            direction = Directions::turnLeft;
+            handled = true;
+            break;
+        }
+            
+        case B3G_RIGHT_ARROW :
+        {
+            std::cout<<"Right "<<std::endl;
+            direction = Directions::turnRight;
+            handled = true;
+            break;
+        }
+            
+        case B3G_SHIFT:
+        {
+            std::cout<<"Stop "<<std::endl;
+            direction = Directions::standby;
+            handled = true;
+            break;
+        }
+            
+        default:
+            // DemoApplication::specialKeyboard(key,x,y);
+            break;
     }
+    
+}
 }
 #endif
 
@@ -1146,9 +1193,32 @@ void MotorDemo::specialKeyboard(int key, int x, int y)
                 break;
             }
                 
-            default:
+            case B3G_LEFT_ARROW :
+            {
+                std::cout<<"Left "<<std::endl;
+                direction = Directions::turnLeft;
+                handled = true;
+                break;
+            }
+                
+            case B3G_RIGHT_ARROW :
+            {
+                std::cout<<"Right "<<std::endl;
+                direction = Directions::turnRight;
+                handled = true;
+                break;
+            }
+                
+            case B3G_SHIFT:
+            {
+                std::cout<<"Stop "<<std::endl;
                 direction = Directions::standby;
-                DemoApplication::specialKeyboard(key,x,y);
+                handled = true;
+                break;
+            }
+                
+            default:
+                // DemoApplication::specialKeyboard(key,x,y);
                 break;
         }
         
@@ -1182,9 +1252,35 @@ bool MotorDemo::keyboardCallback(int key, int state)
                 handled = true;
                 break;
             }
-            default:
-                direction = Directions::standby;
+                
+            case B3G_LEFT_ARROW :
+            {
+                std::cout<<"Left "<<std::endl;
+                direction = Directions::turnLeft;
+                handled = true;
                 break;
+            }
+                
+            case B3G_RIGHT_ARROW :
+            {
+                std::cout<<"Right "<<std::endl;
+                direction = Directions::turnRight;
+                handled = true;
+                break;
+            }
+                
+            case B3G_SHIFT:
+            {
+                std::cout<<"Stop "<<std::endl;
+                direction = Directions::standby;
+                handled = true;
+                break;
+            }
+                
+            default:
+                // DemoApplication::specialKeyboard(key,x,y);
+                break;
+                
                 
         }
     }
