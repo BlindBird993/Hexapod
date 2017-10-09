@@ -286,7 +286,6 @@ public:
                 btVector3 vAxis1 = vToBone1.cross(vUp); //
                 transform.setRotation(btQuaternion(vAxis1, M_PI_2)); //
                 m_bodies[1 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[1 + 3 * i]);
-                //setStartPosition(origin1, true, 1 + 3 * i );
                 /********************************************************************************************************/
                 btVector3 origin2 = btVector3(btScalar(0.), fHeight, -fBodySize.getZ() - fPreLegLength - fLegLength);
                 transform.setIdentity();
@@ -296,7 +295,6 @@ public:
                 btVector3 vAxis2 = vToBone2.cross(vUp); //
                 transform.setRotation(btQuaternion(vAxis2, M_PI_2)); //
                 m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
-                //setStartPosition(origin2, true, 2 + 3 * i );
                 /********************************************************************************************************/
                 btVector3 origin3 = btVector3(btScalar(0.), fHeight - (fForeLegLength / 2), -fBodySize.getZ() - fPreLegLength - fLegLength - fForeLegLength/2);
                 transform.setIdentity();
@@ -306,7 +304,6 @@ public:
                 btVector3 vAxis3 = vToBone3.cross(vUp); //
                 //transform.setRotation(btQuaternion(vAxis, M_PI_2)); //
                 m_bodies[3 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[3 + 3 * i]);
-                //setStartPosition(origin3, false, 3 + 3 * i );
                 /********************************************************************************************************/
                 // setup constraints
                 // hip joints //
@@ -333,7 +330,6 @@ public:
                 m_joints[1 + 3 * i] = hingeC1;
                 m_ownerWorld->addConstraint(m_joints[1 + 3 * i], true);
                 
-                //computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 1 + 3 * i, 2 + 3 * i, 1 + 3 * i);
                 /********************************************************************************************************/
                 // knee joints2 //
                 pivotA2 = btVector3 (btScalar(0.0f), btScalar(-fLegLength/2), btScalar(0.0f));
@@ -346,7 +342,6 @@ public:
                 
                 m_joints[2 + 3 * i] = hingeC2;
                 m_ownerWorld->addConstraint(m_joints[2 + 3 * i], true);
-                //computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 2 + 3 * i, 3 + 3 * i, 2 + 3 * i);
             }
             
             if (i == 1) {
@@ -359,7 +354,6 @@ public:
                 btVector3 vAxis11 = vToBone11.cross(vUp); //
                 transform.setRotation(btQuaternion(vAxis11, M_PI_2)); //
                 m_bodies[1 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[1 + 3 * i]);
-                //setStartPosition(origin1, true, 1 + 3 * i );
                 /********************************************************************************************************/
                 btVector3 origin21 = btVector3((-fBodySize.getX() - (fPreLegLength)*cos(fAngle) - (fLegLength)*cos(fAngle)), fHeight, (-fBodySize.getZ() - (fPreLegLength)*sin(fAngle) - (fLegLength)*sin(fAngle)));
                 transform.setIdentity();
@@ -369,7 +363,6 @@ public:
                 btVector3 vAxis21 = vToBone21.cross(vUp); //
                 transform.setRotation(btQuaternion(vAxis21, M_PI_2)); //
                 m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
-                //setStartPosition(origin22, true, 2 + 3 * i );
                 /********************************************************************************************************/
                 btVector3 origin31 = (btVector3(-fBodySize.getX() - fPreLegLength*cos(fAngle) - fLegLength*cos(fAngle) - (fForeLegLength / 2)*cos(fAngle),
                                                 fHeight - (fForeLegLength / 2),
@@ -381,7 +374,6 @@ public:
                 btVector3 vAxis31 = vToBone31.cross(vUp); //
                 //transform.setRotation(btQuaternion(vAxis22, M_PI_2)); //
                 m_bodies[3 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[3 + 3 * i]);
-                //setStartPosition(origin32, false, 3 + 3 * i );
                 /********************************************************************************************************/
                 // setup constraints
                 // hip joints //
@@ -395,7 +387,6 @@ public:
                 
                 m_joints[3 * i] = hingeC3;
                 m_ownerWorld->addConstraint(m_joints[3 * i], true);
-                //computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
                 /********************************************************************************************************/
                 // knee joints //
                 pivotA4 = btVector3(btScalar(0.0f), btScalar(-fPreLegLength), btScalar(0.0f));
@@ -408,7 +399,6 @@ public:
                 
                 m_joints[1 + 3 * i] = hingeC4;
                 m_ownerWorld->addConstraint(m_joints[1+3 * i], true);
-                //computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 1 + 3 * i, 2 + 3 * i, 1 + 3 * i);
                 /********************************************************************************************************/
                 // knee joints2 //
                 pivotA5 = btVector3(btScalar(0.0f), btScalar(-fLegLength / 2), btScalar(0.0f));
@@ -421,7 +411,6 @@ public:
                 
                 m_joints[2+3 * i] = hingeC5;
                 m_ownerWorld->addConstraint(m_joints[2 + 3 * i], true);
-                //computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 2 + 3 * i, 3 + 3 * i, 2 + 3 * i);
             }
             
             if (i == 2) {
@@ -434,7 +423,6 @@ public:
                 btVector3 vAxis12 = vToBone12.cross(vUp); //
                 transform.setRotation(btQuaternion(vAxis12, M_PI_2)); //
                 m_bodies[1 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[1 + 3 * i]);
-                //setStartPosition(origin1, true, 1 + 3 * i );
                 /********************************************************************************************************/
                 btVector3 origin22 = btVector3(fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle), fHeight, -fBodySize.getZ() - sin(fAngle)*fPreLegLength - fLegLength*sin(fAngle));
                 transform.setIdentity();
@@ -444,7 +432,6 @@ public:
                 btVector3 vAxis22 = vToBone22.cross(vUp); //
                 transform.setRotation(btQuaternion(vAxis22, M_PI_2)); //
                 m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
-                //setStartPosition(origin2, true, 2 + 3 * i );
                 /********************************************************************************************************/
                 btVector3 origin32 = (btVector3(fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle) + (fForeLegLength / 2)*cos(fAngle),
                                                 fHeight - (fForeLegLength / 2),
@@ -470,7 +457,6 @@ public:
                 //hingeC3->setLimit(-M_PI_2, -M_PI_2);
                 m_joints[3 * i] = hingeC6;
                 m_ownerWorld->addConstraint(m_joints[3 * i], true);
-                //computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
                 
                 // knee joints //
                 pivotA7 = btVector3(btScalar(0.0f), btScalar(-fPreLegLength), btScalar(0.0f));
@@ -496,7 +482,6 @@ public:
                 //hingeC5->setLimit(-2 * M_PI_4, -M_PI_4);//2*M_PI_4
                 m_joints[2 + 3 * i] = hingeC8;
                 m_ownerWorld->addConstraint(m_joints[2 + 3 * i], true);
-                //computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 2 + 3 * i, 3 + 3 * i, 2 + 3 * i);
                 /********************************************************************************************************/
             }
             
@@ -510,7 +495,6 @@ public:
                 btVector3 vAxis13 = vToBone13.cross(vUp); //
                 transform.setRotation(btQuaternion(vAxis13, M_PI_2)); //
                 m_bodies[1 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[1 + 3 * i]);
-                //setStartPosition(origin1, true, 1 + 3 * i );
                 /********************************************************************************************************/
                 btVector3 origin23 = btVector3(btScalar(0.), fHeight, fBodySize.getZ() + fPreLegLength + fLegLength);
                 transform.setIdentity();
@@ -520,7 +504,6 @@ public:
                 btVector3 vAxis23 = vToBone23.cross(vUp); //
                 transform.setRotation(btQuaternion(vAxis23, M_PI_2)); //
                 m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
-                //setStartPosition(origin2, true, 2 + 3 * i );
                 /********************************************************************************************************/
                 btVector3 origin33 =(btVector3(btScalar(0.), fHeight - (fForeLegLength / 2), fBodySize.getZ() + fPreLegLength + fLegLength + (fForeLegLength / 2)));
                 transform.setIdentity();
@@ -530,7 +513,6 @@ public:
                 btVector3 vAxis33 = vToBone33.cross(vUp); //
                 //transform.setRotation(btQuaternion(vAxis, M_PI_2)); //
                 m_bodies[3 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[3 + 3 * i]);
-                //setStartPosition(origin3, false, 3 + 3 * i );
                 /********************************************************************************************************/
                 // setup constraints
                 // hip joints //
@@ -544,21 +526,17 @@ public:
                 //hingeC6->setLimit(3 * M_PI / 2, 3 * M_PI / 2);//4*PI/3
                 m_joints[3 * i] = hingeC9;
                 m_ownerWorld->addConstraint(m_joints[3 * i], true);
-                //computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
                 /********************************************************************************************************/
                 // knee joints //
                 pivotA10 = btVector3(btScalar(0.0f), btScalar(fPreLegLength), btScalar(0.0f));
                 pivotB10 = btVector3(btScalar(0.0f), btScalar(-fLegLength), btScalar(0.0f));
                 btVector3 axisA10 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(-1.0f));//change the sighn
                 btVector3 axisB10 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));//setAxis('y');
-                //btVector3 axisA1 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(-1.0f));//setAxis('y');
-                //btVector3 axisB1 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));//setAxis('y');
                 btHingeConstraint* hingeC10 = new btHingeConstraint(*m_bodies[1 + 3 * i], *m_bodies[2 + 3 * i], pivotA10, pivotB10, axisA10, axisB10);
                 hingeC10->setLimit(-M_PI_8, -M_PI_8);//btScalar(0.0f), btScalar(0.0f));
                 //hingeC7->setLimit(-M_PI_8, M_PI_8);
                 m_joints[1 + 3 * i] = hingeC10;
                 m_ownerWorld->addConstraint(m_joints[1 + 3 * i], true);
-                //computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 1 + 3 * i, 2 + 3 * i, 1 + 3 * i);
                 /********************************************************************************************************/
                 // knee joints2 //
                 pivotA11 = btVector3(btScalar(0.0f), btScalar(fLegLength / 2), btScalar(0.0f));
@@ -570,7 +548,6 @@ public:
                 //hingeC8->setLimit(-2 * M_PI_4, -M_PI_4);
                 m_joints[2 + 3 * i] = hingeC11;
                 m_ownerWorld->addConstraint(m_joints[2 + 3 * i], true);
-                //computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 2 + 3 * i, 3 + 3 * i, 2 + 3 * i);
             }
             
             if (i == 4) {
@@ -621,7 +598,6 @@ public:
                 //hingeC6->setLimit(3 * M_PI / 2, 3 * M_PI / 2);//4*PI/3
                 m_joints[3 * i] = hingeC12;
                 m_ownerWorld->addConstraint(m_joints[3 * i], true);
-                //computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
                 /********************************************************************************************************/
                 // knee joints //
                 pivotA13 = btVector3(btScalar(0.0f), btScalar(fPreLegLength), btScalar(0.0f));
@@ -634,7 +610,6 @@ public:
                 //hingeC7->setLimit(-M_PI_8, M_PI_8);
                 m_joints[1 + 3 * i] = hingeC13;
                 m_ownerWorld->addConstraint(m_joints[1 + 3 * i], true);
-                //computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 1 + 3 * i, 2 + 3 * i, 1 + 3 * i);
                 /********************************************************************************************************/
                 // knee joints2 //
                 pivotA14 = btVector3(btScalar(0.0f), btScalar(fLegLength / 2), btScalar(0.0f));
@@ -647,7 +622,6 @@ public:
                 //hingeC11->setLimit(M_PI_2, 2 * M_PI / 3);
                 m_joints[2 + 3 * i] = hingeC14;
                 m_ownerWorld->addConstraint(m_joints[2 + 3 * i], true);
-                //computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 2 + 3 * i, 3 + 3 * i, 2 + 3 * i);
             }
             
             if (i == 5) {
@@ -660,7 +634,6 @@ public:
                 btVector3 vAxis15 = vToBone15.cross(vUp); //
                 transform.setRotation(btQuaternion(vAxis15, M_PI_2)); //
                 m_bodies[1 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[1 + 3 * i]);
-                //setStartPosition(origin1, true, 1 + 3 * i );
                 /********************************************************************************************************/
                 btVector3 origin25 = btVector3(btVector3(
                                                          fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle),
@@ -673,7 +646,6 @@ public:
                 btVector3 vAxis25 = vToBone25.cross(vUp); //
                 transform.setRotation(btQuaternion(vAxis25, M_PI_2)); //
                 m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
-                //setStartPosition(origin2, true, 2 + 3 * i );
                 /********************************************************************************************************/
                 btVector3 origin35 =(btVector3(fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle) + (fForeLegLength / 2)*cos(fAngle),
                                                fHeight - (fForeLegLength / 2),
@@ -685,7 +657,6 @@ public:
                 btVector3 vAxis35 = vToBone35.cross(vUp); //
                 //transform.setRotation(btQuaternion(vAxis32, M_PI_2)); //
                 m_bodies[3 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[3 + 3 * i]);
-                //setStartPosition(origin3, false, 3 + 3 * i );
                 /********************************************************************************************************/
                 // setup constraints
                 // hip joints //
@@ -699,7 +670,6 @@ public:
                 //hingeC12->setLimit(3 * M_PI / 2, 3 * M_PI / 2);//4*PI/3
                 m_joints[3 * i] = hingeC15;
                 m_ownerWorld->addConstraint(m_joints[3 * i], true);
-                //computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 0, 1 + 3 * i, 3 * i);
                 /********************************************************************************************************/
                 // knee joints //
                 pivotA16 = btVector3(btScalar(0.0f), btScalar(fPreLegLength), btScalar(0.0f));
@@ -712,7 +682,6 @@ public:
                 //hingeC13->setLimit(-M_PI_8, M_PI_8);
                 m_joints[1 + 3 * i] = hingeC16;
                 m_ownerWorld->addConstraint(m_joints[1 + 3 * i], true);
-                //computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 1 + 3 * i, 2 + 3 * i, 1 + 3 * i);
                 /********************************************************************************************************/
                 // knee joints2 //
                 pivotA17 = btVector3(btScalar(0.0f), btScalar(fLegLength / 2), btScalar(0.0f));
@@ -725,7 +694,6 @@ public:
                 //hingeC14->setLimit(M_PI_2, 2 * M_PI / 3);
                 m_joints[2 + 3 * i] = hingeC17;
                 m_ownerWorld->addConstraint(m_joints[2 + 3 * i], true);
-                //computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 2 + 3 * i, 3 + 3 * i, 2 + 3 * i);
             }
             
         }
@@ -765,50 +733,6 @@ public:
     }
     
     btTypedConstraint** GetJoints() { return &m_joints[0]; }
-    
-    
-    void computeConstraints (btVector3& pivotA, char axisAName, btVector3& pivotB, char axisBName, char jointAxis, float limitFrom,
-                             float limitTo, int bodyFrom, int bodyTo, int joint )
-    {
-        btVector3 axisA = setAxis(axisAName);
-        btVector3 axisB = setAxis(axisBName);
-        
-        btHingeConstraint* hingeC = new btHingeConstraint(*m_bodies[bodyFrom], *m_bodies[bodyTo], pivotA, pivotB, axisA, axisB);
-        btVector3 vectorA = setAxis(jointAxis);
-        
-        hingeC->setAxis(vectorA);
-        hingeC->setLimit(limitFrom, limitTo);
-        
-        m_joints[joint] = hingeC;
-        m_ownerWorld->addConstraint(m_joints[joint], true);
-    }
-    
-    btVector3 setAxis (char axis)
-    {
-        btVector3 vector;
-        
-        if (axis=='x') vector = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));
-        else if (axis=='y') vector = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
-        else vector = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(1.0f));
-        
-        return vector;
-    }
-    
-    void setStartPosition( btVector3& origin, bool isRotate, int shape)
-    {
-        transform.setIdentity();
-        transform.setOrigin(origin);
-        
-        if (isRotate)
-        {
-            btVector3 vToBone = (origin - vRoot).normalize(); //
-            btVector3 vAxis = vToBone.cross(vUp); //
-            transform.setRotation(btQuaternion(vAxis, M_PI_2)); //
-        }
-        
-        m_bodies[shape] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[shape]);
-    }
-    
     
 };
 
@@ -896,49 +820,49 @@ void MotorDemo::initPhysics()
     Limits limits_1( -M_PI_8, M_PI_8 );
     Limits limits_2( M_PI_8, -M_PI_8 );
     
-    Limits limits_array_6_9_3__15_0_12[3] = {limits_0, limits_0, limits_0}; // 6 9 3   15 0 12
-    Limits limits_array_7_10_4__16_1_13[3] = {limits_1, limits_1, limits_1}; // 7 10 4  16 1 13
-    Limits limits_array_7_10_4__16_1_13_backward[3] = {limits_2, limits_2, limits_2}; // 7 10 4  16 1 13
+    Limits forward_limits_6_9_3__15_0_12[3] = {limits_0, limits_0, limits_0}; // 6 9 3   15 0 12
+    Limits forward_limits_7_10_4__16_1_13[3] = {limits_1, limits_1, limits_1}; // 7 10 4  16 1 13
+    Limits backward_limits_7_10_4__16_1_13[3] = {limits_2, limits_2, limits_2}; // 7 10 4  16 1 13
     
     //forward
-    stagesForward[0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, States::forward);
-    stagesForward[1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, States::backward);
-    stagesForward[2] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, States::backward);
-    stagesForward[3] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, States::forward);
-    stagesForward[4] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, States::forward);
-    stagesForward[5] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, States::backward);
-    stagesForward[6] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, States::backward);
-    stagesForward[7] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, States::forward);
+    stagesForward[0] = Stage (joints_7_10_4, forward_limits_7_10_4__16_1_13, States::forward);
+    stagesForward[1] = Stage (joints_16_1_13, forward_limits_7_10_4__16_1_13, States::backward);
+    stagesForward[2] = Stage (joints_15_0_12, forward_limits_6_9_3__15_0_12, States::backward);
+    stagesForward[3] = Stage (joints_6_9_3, forward_limits_6_9_3__15_0_12, States::forward);
+    stagesForward[4] = Stage (joints_16_1_13, forward_limits_7_10_4__16_1_13, States::forward);
+    stagesForward[5] = Stage (joints_7_10_4, forward_limits_7_10_4__16_1_13, States::backward);
+    stagesForward[6] = Stage (joints_6_9_3, forward_limits_6_9_3__15_0_12, States::backward);
+    stagesForward[7] = Stage (joints_15_0_12, forward_limits_6_9_3__15_0_12, States::forward);
     
     // backward
-    stagesBacward[0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13_backward, States::forward);
-    stagesBacward[1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13_backward, States::backward);
-    stagesBacward[2] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, States::backward);
-    stagesBacward[3] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, States::forward);
-    stagesBacward[4] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13_backward, States::forward);
-    stagesBacward[5] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13_backward, States::backward);
-    stagesBacward[6] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, States::backward);
-    stagesBacward[7] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, States::forward);
+    stagesBacward[0] = Stage (joints_7_10_4, backward_limits_7_10_4__16_1_13, States::forward);
+    stagesBacward[1] = Stage (joints_16_1_13, backward_limits_7_10_4__16_1_13, States::backward);
+    stagesBacward[2] = Stage (joints_15_0_12, forward_limits_6_9_3__15_0_12, States::backward);
+    stagesBacward[3] = Stage (joints_6_9_3, forward_limits_6_9_3__15_0_12, States::forward);
+    stagesBacward[4] = Stage (joints_16_1_13, backward_limits_7_10_4__16_1_13, States::forward);
+    stagesBacward[5] = Stage (joints_7_10_4, backward_limits_7_10_4__16_1_13, States::backward);
+    stagesBacward[6] = Stage (joints_6_9_3, forward_limits_6_9_3__15_0_12, States::backward);
+    stagesBacward[7] = Stage (joints_15_0_12, forward_limits_6_9_3__15_0_12, States::forward);
     
     // turning left
-    stagesTurningLeft[0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13_backward, States::forward);
-    stagesTurningLeft[1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, States::backward);
-    stagesTurningLeft[2] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, States::backward);
-    stagesTurningLeft[3] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, States::forward);
-    stagesTurningLeft[4] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13, States::forward);
-    stagesTurningLeft[5] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13_backward, States::backward);
-    stagesTurningLeft[6] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, States::backward);
-    stagesTurningLeft[7] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, States::forward);
+    stagesTurningLeft[0] = Stage (joints_7_10_4, backward_limits_7_10_4__16_1_13, States::forward);
+    stagesTurningLeft[1] = Stage (joints_16_1_13, forward_limits_7_10_4__16_1_13, States::backward);
+    stagesTurningLeft[2] = Stage (joints_15_0_12, forward_limits_6_9_3__15_0_12, States::backward);
+    stagesTurningLeft[3] = Stage (joints_6_9_3, forward_limits_6_9_3__15_0_12, States::forward);
+    stagesTurningLeft[4] = Stage (joints_16_1_13, forward_limits_7_10_4__16_1_13, States::forward);
+    stagesTurningLeft[5] = Stage (joints_7_10_4, backward_limits_7_10_4__16_1_13, States::backward);
+    stagesTurningLeft[6] = Stage (joints_6_9_3, forward_limits_6_9_3__15_0_12, States::backward);
+    stagesTurningLeft[7] = Stage (joints_15_0_12, forward_limits_6_9_3__15_0_12, States::forward);
     
     // turning right
-    stagesTurningRight[0] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, States::forward);
-    stagesTurningRight[1] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13_backward, States::backward);
-    stagesTurningRight[2] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, States::backward);
-    stagesTurningRight[3] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, States::forward);
-    stagesTurningRight[4] = Stage (joints_16_1_13, limits_array_7_10_4__16_1_13_backward, States::forward);
-    stagesTurningRight[5] = Stage (joints_7_10_4, limits_array_7_10_4__16_1_13, States::backward);
-    stagesTurningRight[6] = Stage (joints_6_9_3, limits_array_6_9_3__15_0_12, States::backward);
-    stagesTurningRight[7] = Stage (joints_15_0_12, limits_array_6_9_3__15_0_12, States::forward);
+    stagesTurningRight[0] = Stage (joints_7_10_4, forward_limits_7_10_4__16_1_13, States::forward);
+    stagesTurningRight[1] = Stage (joints_16_1_13, backward_limits_7_10_4__16_1_13, States::backward);
+    stagesTurningRight[2] = Stage (joints_15_0_12, forward_limits_6_9_3__15_0_12, States::backward);
+    stagesTurningRight[3] = Stage (joints_6_9_3, forward_limits_6_9_3__15_0_12, States::forward);
+    stagesTurningRight[4] = Stage (joints_16_1_13, backward_limits_7_10_4__16_1_13, States::forward);
+    stagesTurningRight[5] = Stage (joints_7_10_4, forward_limits_7_10_4__16_1_13, States::backward);
+    stagesTurningRight[6] = Stage (joints_6_9_3, forward_limits_6_9_3__15_0_12, States::backward);
+    stagesTurningRight[7] = Stage (joints_15_0_12, forward_limits_6_9_3__15_0_12, States::forward);
     
     current_stage = 0;
 }
@@ -964,14 +888,15 @@ void MotorDemo::setMotorTargets(btScalar deltaTime)
         ms = minFPS;
     
     m_Time += ms;
+    time_passed += ms/1000000.;
+    float current_angle;
     
     //
     // set per-frame sinusoidal position targets using angular motor (hacky?)
     //
     
-    float current_angle;
     
-    if (isfinishedStage )
+    if (isfinishedStage)
     {
         current_stage++;
         isfinishedStage = false;
@@ -979,10 +904,7 @@ void MotorDemo::setMotorTargets(btScalar deltaTime)
     
     if (current_stage >= 8) current_stage = 0;
     
-    
-    time_passed += ms/1000000.;
-    
-    if (time_passed >= 5 && time_passed <=6 )
+    if (time_passed >= 5 && time_passed <=6)
     {
         // raising legs
         for (int r = 0; r<m_rigs.size(); r++)
@@ -1087,15 +1009,13 @@ void MotorDemo::setMotorTargets(btScalar deltaTime)
                     //                std::cout<<" Angle = "<<current_angle;
                     //                std::cout<<" Uplimit = "<<current_up_limit<<" Lowlimit = "<<current_low_limit<<std::endl;
                     
-                    if ( direction==States::forward )
+                    if (direction==States::forward)
                     {
                         if (current_angle >= current_up_limit - abs (current_up_limit/10))
                         {
                             // hingeC->setLimit(current_up_limit, current_up_limit);
                             isFinished[i] = true;
-                            
                         }
-                        
                     }
                     
                     else
