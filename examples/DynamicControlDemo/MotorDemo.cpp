@@ -83,6 +83,8 @@ public: Stage (int* hinges, Limits* limits, States direction)
         this->direction = direction;
     }
     
+~Stage() {}
+    
 public: int* getHinges()
     {
         return  this->hinges;
