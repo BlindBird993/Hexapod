@@ -944,6 +944,7 @@ void MotorDemo::setMotorTargets(btScalar deltaTime)
                 } // i cycle
                 
             } // r cycle
+            direction = States::standby;
         } //  if (direction == State::up)
         
         else  if (direction == States::down)
@@ -967,6 +968,7 @@ void MotorDemo::setMotorTargets(btScalar deltaTime)
                 } // i cycle
                 
             } // r cycle
+            direction = States::standby;
         } //  if (direction == State::up)
         
         
