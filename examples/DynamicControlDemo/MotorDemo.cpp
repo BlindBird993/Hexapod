@@ -225,11 +225,9 @@ public:
         //
         // Setup geometry
         //
-        //float fBodySize  = 0.25f;
         float fPreLegLength = 0.25f;
         float fLegLength = 0.45f;
         float fForeLegLength = 0.75f;
-        //m_shapes[0] = new btCapsuleShape(btScalar(fBodySize), btScalar(0.10));
         btVector3 fBodySize(1.2, 0.05, 0.6);
         float fAngle = atan2(fBodySize.getZ(), fBodySize.getX());
         float fAlpha = M_PI_4;
@@ -285,8 +283,8 @@ public:
                 transform.setOrigin(origin1);
                 
                 btVector3 vToBone1 = (origin1 - vRoot).normalize();
-                btVector3 vAxis1 = vToBone1.cross(vUp); //
-                transform.setRotation(btQuaternion(vAxis1, M_PI_2)); //
+                btVector3 vAxis1 = vToBone1.cross(vUp);
+                transform.setRotation(btQuaternion(vAxis1, M_PI_2));
                 m_bodies[1 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[1 + 3 * i]);
                 /********************************************************************************************************/
                 btVector3 origin2 = btVector3(btScalar(0.), fHeight, -fBodySize.getZ() - fPreLegLength - fLegLength);
@@ -294,32 +292,30 @@ public:
                 transform.setOrigin(origin2);
                 
                 btVector3 vToBone2 = (origin2 - vRoot).normalize();
-                btVector3 vAxis2 = vToBone2.cross(vUp); //
-                transform.setRotation(btQuaternion(vAxis2, M_PI_2)); //
+                btVector3 vAxis2 = vToBone2.cross(vUp);
+                transform.setRotation(btQuaternion(vAxis2, M_PI_2));
                 m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
                 /********************************************************************************************************/
                 btVector3 origin3 = btVector3(btScalar(0.), fHeight - (fForeLegLength / 2), -fBodySize.getZ() - fPreLegLength - fLegLength - fForeLegLength/2);
                 transform.setIdentity();
                 transform.setOrigin(origin3);
                 
-                btVector3 vToBone3 = (origin3 - vRoot).normalize(); ////for 1,2,4,5 vToBone.cross(vUp) = vAxis
-                btVector3 vAxis3 = vToBone3.cross(vUp); //
-                //transform.setRotation(btQuaternion(vAxis, M_PI_2)); //
+                btVector3 vToBone3 = (origin3 - vRoot).normalize();
+                btVector3 vAxis3 = vToBone3.cross(vUp);
                 m_bodies[3 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[3 + 3 * i]);
                 /********************************************************************************************************/
                 // setup constraints
                 // hip joints //
-                pivotA0 = btVector3 (btScalar(0.0f), btScalar(0.0f), btScalar(-fBodySize.getZ()));//fHight
-                pivotB0 = btVector3 (btScalar(0.0f), btScalar(fPreLegLength), btScalar(0.0f));//placing joint
-                btVector3 axisA0 = btVector3(btScalar(0.0f), btScalar(-1.0f), btScalar(0.0f));//setAxis('y');
-                btVector3 axisB0 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));//setAxis('x');
+                pivotA0 = btVector3 (btScalar(0.0f), btScalar(0.0f), btScalar(-fBodySize.getZ()));
+                pivotB0 = btVector3 (btScalar(0.0f), btScalar(fPreLegLength), btScalar(0.0f));
+                btVector3 axisA0 = btVector3(btScalar(0.0f), btScalar(-1.0f), btScalar(0.0f));
+				btVector3 axisB0 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));
                 
                 btHingeConstraint* hingeC0 = new btHingeConstraint(*m_bodies[3 * i], *m_bodies[1 + 3 * i], pivotA0, pivotB0, axisA0, axisB0);
-                hingeC0->setLimit(-M_PI_2, -M_PI_2); //setLimit(-2*M_PI/3,-M_PI_4);//setLimit(-M_PI_2, -M_PI_2);
+                hingeC0->setLimit(-M_PI_2, -M_PI_2);
                 
                 m_joints[3 * i] = hingeC0;
                 m_ownerWorld->addConstraint(m_joints[3 * i], true);
-                //computeConstraints(pivotA, 'y', pivotB, 'x', 'y', btScalar(0.), btScalar(0.), 0, 1 + 3 * i, 3 * i);
                 /********************************************************************************************************/
                 // knee joints //
                 pivotA1 = btVector3 (btScalar(0.0f), btScalar(-fPreLegLength), btScalar(0.0f));
@@ -328,7 +324,7 @@ public:
                 btVector3 axisB1 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));//setAxis('y');
                 
                 btHingeConstraint* hingeC1 = new btHingeConstraint(*m_bodies[1 + 3 * i], *m_bodies[2 + 3 * i], pivotA1, pivotB1, axisA1, axisB1);
-                hingeC1->setLimit(-M_PI_8, -M_PI_8);//btScalar(0.0f), btScalar(0.0f));M_PI_8
+                hingeC1->setLimit(-M_PI_8, -M_PI_8);
                 m_joints[1 + 3 * i] = hingeC1;
                 m_ownerWorld->addConstraint(m_joints[1 + 3 * i], true);
                 
@@ -336,8 +332,8 @@ public:
                 // knee joints2 //
                 pivotA2 = btVector3 (btScalar(0.0f), btScalar(-fLegLength/2), btScalar(0.0f));
                 pivotB2 = btVector3 (btScalar(0.0f), btScalar(fForeLegLength/2), btScalar(0.0f));
-                btVector3 axisA2 = btVector3(btScalar(-1.0f), btScalar(0.0f), btScalar(0.0f));//setAxis('y');
-                btVector3 axisB2 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(1.0f));//setAxis('y');
+                btVector3 axisA2 = btVector3(btScalar(-1.0f), btScalar(0.0f), btScalar(0.0f));
+                btVector3 axisB2 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(1.0f));
                 
                 btHingeConstraint* hingeC2 = new btHingeConstraint(*m_bodies[2 + 3 * i], *m_bodies[3 + 3 * i], pivotA2, pivotB2, axisA2, axisB2);
                 hingeC2->setLimit(-2*M_PI_4, -2*M_PI_4);//-M_PI_4
@@ -352,18 +348,18 @@ public:
                 transform.setIdentity();
                 transform.setOrigin(origin11);
                 
-                btVector3 vToBone11 = (origin11 - vRoot).normalize(); ////for 1,2,4,5 vToBone.cross(vUp) = vAxis
-                btVector3 vAxis11 = vToBone11.cross(vUp); //
-                transform.setRotation(btQuaternion(vAxis11, M_PI_2)); //
+                btVector3 vToBone11 = (origin11 - vRoot).normalize();
+                btVector3 vAxis11 = vToBone11.cross(vUp); 
+                transform.setRotation(btQuaternion(vAxis11, M_PI_2)); 
                 m_bodies[1 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[1 + 3 * i]);
                 /********************************************************************************************************/
                 btVector3 origin21 = btVector3((-fBodySize.getX() - (fPreLegLength)*cos(fAngle) - (fLegLength)*cos(fAngle)), fHeight, (-fBodySize.getZ() - (fPreLegLength)*sin(fAngle) - (fLegLength)*sin(fAngle)));
                 transform.setIdentity();
                 transform.setOrigin(origin21);
                 
-                btVector3 vToBone21 = (origin21 - vRoot).normalize(); ////for 1,2,4,5 vToBone.cross(vUp) = vAxis
-                btVector3 vAxis21 = vToBone21.cross(vUp); //
-                transform.setRotation(btQuaternion(vAxis21, M_PI_2)); //
+                btVector3 vToBone21 = (origin21 - vRoot).normalize();
+                btVector3 vAxis21 = vToBone21.cross(vUp);
+                transform.setRotation(btQuaternion(vAxis21, M_PI_2));
                 m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
                 /********************************************************************************************************/
                 btVector3 origin31 = (btVector3(-fBodySize.getX() - fPreLegLength*cos(fAngle) - fLegLength*cos(fAngle) - (fForeLegLength / 2)*cos(fAngle),
@@ -372,20 +368,19 @@ public:
                 transform.setIdentity();
                 transform.setOrigin(origin31);
                 
-                btVector3 vToBone31 = (origin31 - vRoot).normalize(); ////for 1,2,4,5 vToBone.cross(vUp) = vAxis
-                btVector3 vAxis31 = vToBone31.cross(vUp); //
-                //transform.setRotation(btQuaternion(vAxis22, M_PI_2)); //
+                btVector3 vToBone31 = (origin31 - vRoot).normalize();
+                btVector3 vAxis31 = vToBone31.cross(vUp);
                 m_bodies[3 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[3 + 3 * i]);
                 /********************************************************************************************************/
                 // setup constraints
                 // hip joints //
-                pivotA3 = btVector3(btScalar(-fBodySize.getX()), btScalar(0.0f), btScalar(-fBodySize.getZ()));//cos and sin
-                pivotB3 = btVector3(btScalar(0.0f), btScalar(fPreLegLength), btScalar(0.0f));///2
-                btVector3 axisA3 = btVector3(btScalar(0.0f), btScalar(-1.0f), btScalar(0.0f));//-1
+                pivotA3 = btVector3(btScalar(-fBodySize.getX()), btScalar(0.0f), btScalar(-fBodySize.getZ()));
+                pivotB3 = btVector3(btScalar(0.0f), btScalar(fPreLegLength), btScalar(0.0f));
+                btVector3 axisA3 = btVector3(btScalar(0.0f), btScalar(-1.0f), btScalar(0.0f));
                 btVector3 axisB3 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));
                 
                 btHingeConstraint* hingeC3 = new btHingeConstraint(*m_bodies[0], *m_bodies[1 + 3 * i], pivotA3, pivotB3, axisA3, axisB3);
-                hingeC3->setLimit(-M_PI_4, -M_PI_4);//setLimit(-2 * M_PI / 3, -M_PI_4);//setLimit(-M_PI_2,-M_PI_2); or -M_PI_2,-M_PI_2;
+                hingeC3->setLimit(-M_PI_4, -M_PI_4);
                 
                 m_joints[3 * i] = hingeC3;
                 m_ownerWorld->addConstraint(m_joints[3 * i], true);
@@ -393,11 +388,11 @@ public:
                 // knee joints //
                 pivotA4 = btVector3(btScalar(0.0f), btScalar(-fPreLegLength), btScalar(0.0f));
                 pivotB4 = btVector3(btScalar(0.0f), btScalar(fLegLength), btScalar(0.0f));
-                btVector3 axisA4 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(-1.0f));//setAxis('y');
-                btVector3 axisB4 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));//setAxis('x');
+                btVector3 axisA4 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(-1.0f));
+                btVector3 axisB4 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));
                 
                 btHingeConstraint* hingeC4 = new btHingeConstraint(*m_bodies[1 + 3 * i], *m_bodies[2 + 3 * i], pivotA4, pivotB4, axisA4, axisB4);
-                hingeC4->setLimit(-M_PI_8, -M_PI_8);//M_PI_8
+                hingeC4->setLimit(-M_PI_8, -M_PI_8);
                 
                 m_joints[1 + 3 * i] = hingeC4;
                 m_ownerWorld->addConstraint(m_joints[1+3 * i], true);
@@ -405,11 +400,11 @@ public:
                 // knee joints2 //
                 pivotA5 = btVector3(btScalar(0.0f), btScalar(-fLegLength / 2), btScalar(0.0f));
                 pivotB5 = btVector3(btScalar(0.0f), btScalar(fForeLegLength / 2), btScalar(0.0f));
-                btVector3 axisA5 = btVector3(btScalar(-1.0f), btScalar(0.0f), btScalar(0.0f));//setAxis('y');1.0.0
-                btVector3 axisB5 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(1.0f));//setAxis('x');0.0.-1
+                btVector3 axisA5 = btVector3(btScalar(-1.0f), btScalar(0.0f), btScalar(0.0f));
+                btVector3 axisB5 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(1.0f));
                 
                 btHingeConstraint* hingeC5 = new btHingeConstraint(*m_bodies[2 + 3 * i], *m_bodies[3 + 3 * i], pivotA5, pivotB5, axisA5, axisB5);
-                hingeC5->setLimit(-2 * M_PI_4, -2*M_PI_4);//2*M_PI_4
+                hingeC5->setLimit(-2 * M_PI_4, -2*M_PI_4);
                 
                 m_joints[2+3 * i] = hingeC5;
                 m_ownerWorld->addConstraint(m_joints[2 + 3 * i], true);
@@ -421,18 +416,18 @@ public:
                 transform.setIdentity();
                 transform.setOrigin(origin12);
                 
-                btVector3 vToBone12 = (origin12 - vRoot).normalize(); ////for 1,2,4,5 vToBone.cross(vUp) = vAxis
-                btVector3 vAxis12 = vToBone12.cross(vUp); //
-                transform.setRotation(btQuaternion(vAxis12, M_PI_2)); //
+                btVector3 vToBone12 = (origin12 - vRoot).normalize();
+                btVector3 vAxis12 = vToBone12.cross(vUp);
+                transform.setRotation(btQuaternion(vAxis12, M_PI_2));
                 m_bodies[1 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[1 + 3 * i]);
                 /********************************************************************************************************/
                 btVector3 origin22 = btVector3(fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle), fHeight, -fBodySize.getZ() - sin(fAngle)*fPreLegLength - fLegLength*sin(fAngle));
                 transform.setIdentity();
                 transform.setOrigin(origin22);
                 
-                btVector3 vToBone22 = (origin22 - vRoot).normalize(); ////for 1,2,4,5 vToBone.cross(vUp) = vAxis
-                btVector3 vAxis22 = vToBone22.cross(vUp); //
-                transform.setRotation(btQuaternion(vAxis22, M_PI_2)); //
+                btVector3 vToBone22 = (origin22 - vRoot).normalize();
+                btVector3 vAxis22 = vToBone22.cross(vUp); 
+                transform.setRotation(btQuaternion(vAxis22, M_PI_2));
                 m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
                 /********************************************************************************************************/
                 btVector3 origin32 = (btVector3(fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle) + (fForeLegLength / 2)*cos(fAngle),
@@ -441,11 +436,9 @@ public:
                 transform.setIdentity();
                 transform.setOrigin(origin32);
                 
-                btVector3 vToBone32 = (origin32 - vRoot).normalize(); ////for 1,2,4,5 vToBone.cross(vUp) = vAxis
-                btVector3 vAxis32 = vToBone32.cross(vUp); //
-                //transform.setRotation(btQuaternion(vAxis32, M_PI_2)); //
+                btVector3 vToBone32 = (origin32 - vRoot).normalize();
+                btVector3 vAxis32 = vToBone32.cross(vUp);
                 m_bodies[3 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[3 + 3 * i]);
-                // setStartPosition(origin3, false, 3 + 3 * i );
                 /********************************************************************************************************/
                 // setup constraints
                 // hip joints //
@@ -455,33 +448,29 @@ public:
                 btVector3 axisB6 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));//setAxis('x');
                 
                 btHingeConstraint* hingeC6 = new btHingeConstraint(*m_bodies[0], *m_bodies[1 + 3 * i], pivotA6, pivotB6, axisA6, axisB6);
-                hingeC6->setLimit(-M_PI_2, -M_PI_2);//setLimit(-2 * M_PI / 3,-M_PI_4);//setLimit(3 * M_PI / 2, 3 * M_PI / 2);//-M_PI_2
-                //hingeC3->setLimit(-M_PI_2, -M_PI_2);
+                hingeC6->setLimit(-M_PI_2, -M_PI_2);
                 m_joints[3 * i] = hingeC6;
                 m_ownerWorld->addConstraint(m_joints[3 * i], true);
                 
                 // knee joints //
                 pivotA7 = btVector3(btScalar(0.0f), btScalar(-fPreLegLength), btScalar(0.0f));
                 pivotB7 = btVector3(btScalar(0.0f), btScalar(fLegLength), btScalar(0.0f));
-                btVector3 axisA7 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(-1.0f));//setAxis('y');
-                btVector3 axisB7 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));//setAxis('x');
+                btVector3 axisA7 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(-1.0f));
+                btVector3 axisB7 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));
                 
                 btHingeConstraint* hingeC7 = new btHingeConstraint(*m_bodies[1 + 3 * i], *m_bodies[2 + 3 * i], pivotA7, pivotB7, axisA7, axisB7);
-                hingeC7->setLimit(-M_PI_8, -M_PI_8);//setLimit(-2*M_PI_8, 0);//inverse of limits
-                //hingeC4->setLimit(-M_PI_8, M_PI_8);//M_PI_8
+                hingeC7->setLimit(-M_PI_8, -M_PI_8);
                 m_joints[1 + 3 * i] = hingeC7;
                 m_ownerWorld->addConstraint(m_joints[1 + 3 * i], true);
-                //computeConstraints(pivotA, 'y', pivotB, 'y', 'y', btScalar(0), btScalar(0), 1 + 3 * i, 2 + 3 * i, 1 + 3 * i);
                 /********************************************************************************************************/
                 // knee joints2 //
                 pivotA8 = btVector3(btScalar(0.0f), btScalar(-fLegLength / 2), btScalar(0.0f));
                 pivotB8 = btVector3(btScalar(0.0f), btScalar(fForeLegLength / 2), btScalar(0.0f));
-                btVector3 axisA8 = btVector3(btScalar(-1.0f), btScalar(0.0f), btScalar(0.0f));//setAxis('y');
-                btVector3 axisB8 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(1.0f));//setAxis('x');
+                btVector3 axisA8 = btVector3(btScalar(-1.0f), btScalar(0.0f), btScalar(0.0f));
+                btVector3 axisB8 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(1.0f));
                 
                 btHingeConstraint* hingeC8 = new btHingeConstraint(*m_bodies[2 + 3 * i], *m_bodies[3 + 3 * i], pivotA8, pivotB8, axisA8, axisB8);
-                hingeC8->setLimit(-2 * M_PI_4, -2*M_PI_4);//setLimit(-M_PI_4, -M_PI_4);//-2 * M_PI_4
-                //hingeC5->setLimit(-2 * M_PI_4, -M_PI_4);//2*M_PI_4
+                hingeC8->setLimit(-2 * M_PI_4, -2*M_PI_4);
                 m_joints[2 + 3 * i] = hingeC8;
                 m_ownerWorld->addConstraint(m_joints[2 + 3 * i], true);
                 /********************************************************************************************************/
@@ -493,61 +482,57 @@ public:
                 transform.setIdentity();
                 transform.setOrigin(origin13);
                 
-                btVector3 vToBone13 = (origin13 - vRoot).normalize(); ////for 1,2,4,5 vToBone.cross(vUp) = vAxis
-                btVector3 vAxis13 = vToBone13.cross(vUp); //
-                transform.setRotation(btQuaternion(vAxis13, M_PI_2)); //
+                btVector3 vToBone13 = (origin13 - vRoot).normalize();
+                btVector3 vAxis13 = vToBone13.cross(vUp);
+                transform.setRotation(btQuaternion(vAxis13, M_PI_2));
                 m_bodies[1 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[1 + 3 * i]);
                 /********************************************************************************************************/
                 btVector3 origin23 = btVector3(btScalar(0.), fHeight, fBodySize.getZ() + fPreLegLength + fLegLength);
                 transform.setIdentity();
                 transform.setOrigin(origin23);
                 
-                btVector3 vToBone23 = (origin23 - vRoot).normalize(); ////for 1,2,4,5 vToBone.cross(vUp) = vAxis
-                btVector3 vAxis23 = vToBone23.cross(vUp); //
-                transform.setRotation(btQuaternion(vAxis23, M_PI_2)); //
+                btVector3 vToBone23 = (origin23 - vRoot).normalize();
+                btVector3 vAxis23 = vToBone23.cross(vUp);
+                transform.setRotation(btQuaternion(vAxis23, M_PI_2));
                 m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
                 /********************************************************************************************************/
                 btVector3 origin33 =(btVector3(btScalar(0.), fHeight - (fForeLegLength / 2), fBodySize.getZ() + fPreLegLength + fLegLength + (fForeLegLength / 2)));
                 transform.setIdentity();
                 transform.setOrigin(origin33);
                 
-                btVector3 vToBone33 = (origin33 - vRoot).normalize(); ////for 1,2,4,5 vToBone.cross(vUp) = vAxis
-                btVector3 vAxis33 = vToBone33.cross(vUp); //
-                //transform.setRotation(btQuaternion(vAxis, M_PI_2)); //
+                btVector3 vToBone33 = (origin33 - vRoot).normalize();
+                btVector3 vAxis33 = vToBone33.cross(vUp);
                 m_bodies[3 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[3 + 3 * i]);
                 /********************************************************************************************************/
                 // setup constraints
                 // hip joints //
                 pivotA9 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(fBodySize.getZ()));
                 pivotB9 = btVector3(btScalar(0.0f), btScalar(-fPreLegLength), btScalar(0.0f));
-                btVector3 axisA9 = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));//change sign ?-1
-                btVector3 axisB9 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));//setAxis('x');
+                btVector3 axisA9 = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+                btVector3 axisB9 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));
                 
                 btHingeConstraint* hingeC9 = new btHingeConstraint(*m_bodies[0], *m_bodies[1 + 3 * i], pivotA9, pivotB9, axisA9, axisB9);
-                hingeC9->setLimit(-M_PI_2, -M_PI_2);//setLimit(-2 * M_PI / 3, -M_PI_4);//setLimit(3*M_PI / 2, 3*M_PI / 2);
-                //hingeC6->setLimit(3 * M_PI / 2, 3 * M_PI / 2);//4*PI/3
+                hingeC9->setLimit(-M_PI_2, -M_PI_2);
                 m_joints[3 * i] = hingeC9;
                 m_ownerWorld->addConstraint(m_joints[3 * i], true);
                 /********************************************************************************************************/
                 // knee joints //
                 pivotA10 = btVector3(btScalar(0.0f), btScalar(fPreLegLength), btScalar(0.0f));
                 pivotB10 = btVector3(btScalar(0.0f), btScalar(-fLegLength), btScalar(0.0f));
-                btVector3 axisA10 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(-1.0f));//change the sighn
-                btVector3 axisB10 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));//setAxis('y');
+                btVector3 axisA10 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(-1.0f));
+                btVector3 axisB10 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));
                 btHingeConstraint* hingeC10 = new btHingeConstraint(*m_bodies[1 + 3 * i], *m_bodies[2 + 3 * i], pivotA10, pivotB10, axisA10, axisB10);
-                hingeC10->setLimit(-M_PI_8, -M_PI_8);//btScalar(0.0f), btScalar(0.0f));
-                //hingeC7->setLimit(-M_PI_8, M_PI_8);
+                hingeC10->setLimit(-M_PI_8, -M_PI_8);
                 m_joints[1 + 3 * i] = hingeC10;
                 m_ownerWorld->addConstraint(m_joints[1 + 3 * i], true);
                 /********************************************************************************************************/
                 // knee joints2 //
                 pivotA11 = btVector3(btScalar(0.0f), btScalar(fLegLength / 2), btScalar(0.0f));
                 pivotB11 = btVector3(btScalar(0.0f), btScalar(fForeLegLength / 2), btScalar(0.0f));
-                btVector3 axisA11 = btVector3(btScalar(-1.0f), btScalar(0.0f), btScalar(0.0f));//change sight 1
-                btVector3 axisB11 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(1.0f));//setAxis('y');
+                btVector3 axisA11 = btVector3(btScalar(-1.0f), btScalar(0.0f), btScalar(0.0f));
+                btVector3 axisB11 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(1.0f));
                 btHingeConstraint* hingeC11 = new btHingeConstraint(*m_bodies[2 + 3 * i], *m_bodies[3 + 3 * i], pivotA11, pivotB11, axisA11, axisB11);
-                hingeC11->setLimit(M_PI_2, M_PI_2);//2 * M_PI / 3);//setLimit(-2 *M_PI_4, -2*M_PI_4);//setLimit(M_PI_2, 2*M_PI/3);//M_PI_4, 2*M_PI_4);
-                //hingeC8->setLimit(-2 * M_PI_4, -M_PI_4);
+                hingeC11->setLimit(M_PI_2, M_PI_2);
                 m_joints[2 + 3 * i] = hingeC11;
                 m_ownerWorld->addConstraint(m_joints[2 + 3 * i], true);
             }
@@ -558,11 +543,11 @@ public:
                 transform.setIdentity();
                 transform.setOrigin(origin14);
                 
-                btVector3 vToBone14 = (origin14 - vRoot).normalize(); ////for 1,2,4,5 vToBone.cross(vUp) = vAxis
-                btVector3 vAxis14 = vToBone14.cross(vUp); //
-                transform.setRotation(btQuaternion(vAxis14, M_PI_2)); //
+                btVector3 vToBone14 = (origin14 - vRoot).normalize();
+                btVector3 vAxis14 = vToBone14.cross(vUp);
+                transform.setRotation(btQuaternion(vAxis14, M_PI_2));
                 m_bodies[1 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[1 + 3 * i]);
-                //setStartPosition(origin1, true, 1 + 3 * i );
+
                 /********************************************************************************************************/
                 btVector3 origin24 = btVector3( -fBodySize.getX() - fPreLegLength*cos(fAngle) - fLegLength*cos(fAngle),
                                                fHeight,
@@ -570,11 +555,10 @@ public:
                 transform.setIdentity();
                 transform.setOrigin(origin24);
                 
-                btVector3 vToBone24 = (origin24 - vRoot).normalize(); ////for 1,2,4,5 vToBone.cross(vUp) = vAxis
-                btVector3 vAxis24 = vToBone24.cross(vUp); //
-                transform.setRotation(btQuaternion(vAxis24, M_PI_2)); //
+                btVector3 vToBone24 = (origin24 - vRoot).normalize();
+                btVector3 vAxis24 = vToBone24.cross(vUp);
+                transform.setRotation(btQuaternion(vAxis24, M_PI_2));
                 m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
-                //setStartPosition(origin2, true, 2 + 3 * i );
                 /********************************************************************************************************/
                 btVector3 origin34 =(btVector3(-fBodySize.getX() - fPreLegLength*cos(fAngle) -fLegLength*cos(fAngle) -(fForeLegLength / 2)*cos(fAngle),
                                                fHeight - (fForeLegLength / 2),
@@ -582,46 +566,41 @@ public:
                 transform.setIdentity();
                 transform.setOrigin(origin34);
                 
-                btVector3 vToBone34 = (origin34 - vRoot).normalize(); ////for 1,2,4,5 vToBone.cross(vUp) = vAxis
-                btVector3 vAxis34 = vToBone34.cross(vUp); //
-                //transform.setRotation(btQuaternion(vAxis22, M_PI_2)); //
+                btVector3 vToBone34 = (origin34 - vRoot).normalize();
+                btVector3 vAxis34 = vToBone34.cross(vUp);
                 m_bodies[3 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[3 + 3 * i]);
-                //setStartPosition(origin3, false, 3 + 3 * i );
                 
                 // setup constraints
                 // hip joints //
                 pivotA12 = btVector3(btScalar(-fBodySize.getX()), btScalar(0.0f), btScalar(fBodySize.getZ()));
                 pivotB12 = btVector3(btScalar(0.0f), btScalar(-fPreLegLength), btScalar(0.0f));
-                btVector3 axisA12 = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));//-1
-                btVector3 axisB12 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));//setAxis('x');
+                btVector3 axisA12 = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+                btVector3 axisB12 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));
                 
                 btHingeConstraint* hingeC12 = new btHingeConstraint(*m_bodies[0], *m_bodies[1 + 3 * i], pivotA12, pivotB12, axisA12, axisB12);
-                hingeC12->setLimit(-M_PI_4, -M_PI_4);//setLimit(-2 * M_PI / 3, -M_PI_4);//setLimit(-M_PI_4, -M_PI_4);//setLimit(4 * M_PI / 3, 3 * M_PI / 2);
-                //hingeC6->setLimit(3 * M_PI / 2, 3 * M_PI / 2);//4*PI/3
+                hingeC12->setLimit(-M_PI_4, -M_PI_4);
                 m_joints[3 * i] = hingeC12;
                 m_ownerWorld->addConstraint(m_joints[3 * i], true);
                 /********************************************************************************************************/
                 // knee joints //
                 pivotA13 = btVector3(btScalar(0.0f), btScalar(fPreLegLength), btScalar(0.0f));
                 pivotB13 = btVector3(btScalar(0.0f), btScalar(-fLegLength), btScalar(0.0f));
-                btVector3 axisA13 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(-1.0f));//1
-                btVector3 axisB13 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));//setAxis('x');
+                btVector3 axisA13 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(-1.0f));
+                btVector3 axisB13 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));
                 
                 btHingeConstraint* hingeC13 = new btHingeConstraint(*m_bodies[1 + 3 * i], *m_bodies[2 + 3 * i], pivotA13, pivotB13, axisA13, axisB13);
                 hingeC13->setLimit(-M_PI_8, -M_PI_8);
-                //hingeC7->setLimit(-M_PI_8, M_PI_8);
                 m_joints[1 + 3 * i] = hingeC13;
                 m_ownerWorld->addConstraint(m_joints[1 + 3 * i], true);
                 /********************************************************************************************************/
                 // knee joints2 //
                 pivotA14 = btVector3(btScalar(0.0f), btScalar(fLegLength / 2), btScalar(0.0f));
                 pivotB14 = btVector3(btScalar(0.0f), btScalar(fForeLegLength / 2), btScalar(0.0f));
-                btVector3 axisA14 = btVector3(btScalar(-1.0f), btScalar(0.0f), btScalar(0.0f));//change sight 1
+                btVector3 axisA14 = btVector3(btScalar(-1.0f), btScalar(0.0f), btScalar(0.0f));
                 btVector3 axisB14 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(1.0f));
                 
                 btHingeConstraint* hingeC14 = new btHingeConstraint(*m_bodies[2 + 3 * i], *m_bodies[3 + 3 * i], pivotA14, pivotB14, axisA14, axisB14);
-                hingeC14->setLimit(M_PI_2, M_PI_2);//setLimit(M_PI_2, 2 * M_PI / 3);//setLimit(-2 * M_PI_4, -M_PI_4);
-                //hingeC11->setLimit(M_PI_2, 2 * M_PI / 3);
+                hingeC14->setLimit(M_PI_2, M_PI_2);
                 m_joints[2 + 3 * i] = hingeC14;
                 m_ownerWorld->addConstraint(m_joints[2 + 3 * i], true);
             }
@@ -632,9 +611,9 @@ public:
                 transform.setIdentity();
                 transform.setOrigin(origin15);
                 
-                btVector3 vToBone15 = (origin15 - vRoot).normalize(); ////for 1,2,4,5 vToBone.cross(vUp) = vAxis
-                btVector3 vAxis15 = vToBone15.cross(vUp); //
-                transform.setRotation(btQuaternion(vAxis15, M_PI_2)); //
+                btVector3 vToBone15 = (origin15 - vRoot).normalize();
+                btVector3 vAxis15 = vToBone15.cross(vUp);
+                transform.setRotation(btQuaternion(vAxis15, M_PI_2));
                 m_bodies[1 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[1 + 3 * i]);
                 /********************************************************************************************************/
                 btVector3 origin25 = btVector3(btVector3(
@@ -644,9 +623,9 @@ public:
                 transform.setIdentity();
                 transform.setOrigin(origin25);
                 
-                btVector3 vToBone25 = (origin25 - vRoot).normalize(); ////for 1,2,4,5 vToBone.cross(vUp) = vAxis
-                btVector3 vAxis25 = vToBone25.cross(vUp); //
-                transform.setRotation(btQuaternion(vAxis25, M_PI_2)); //
+                btVector3 vToBone25 = (origin25 - vRoot).normalize();
+                btVector3 vAxis25 = vToBone25.cross(vUp); 
+                transform.setRotation(btQuaternion(vAxis25, M_PI_2)); 
                 m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
                 /********************************************************************************************************/
                 btVector3 origin35 =(btVector3(fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle) + (fForeLegLength / 2)*cos(fAngle),
@@ -655,33 +634,30 @@ public:
                 transform.setIdentity();
                 transform.setOrigin(origin35);
                 
-                btVector3 vToBone35 = (origin35 - vRoot).normalize(); ////for 1,2,4,5 vToBone.cross(vUp) = vAxis
-                btVector3 vAxis35 = vToBone35.cross(vUp); //
-                //transform.setRotation(btQuaternion(vAxis32, M_PI_2)); //
+                btVector3 vToBone35 = (origin35 - vRoot).normalize();
+                btVector3 vAxis35 = vToBone35.cross(vUp); 
                 m_bodies[3 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[3 + 3 * i]);
                 /********************************************************************************************************/
                 // setup constraints
                 // hip joints //
                 pivotA15 = btVector3(btScalar(fBodySize.getX()), btScalar(0.0f), btScalar(fBodySize.getZ()));
                 pivotB15 = btVector3(btScalar(0.0f), btScalar(-fPreLegLength), btScalar(0.0f));
-                btVector3 axisA15 = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));//change sign
-                btVector3 axisB15 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));//setAxis('x');
+                btVector3 axisA15 = btVector3(btScalar(0.0f), btScalar(1.0f), btScalar(0.0f));
+                btVector3 axisB15 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));
                 
                 btHingeConstraint* hingeC15 = new btHingeConstraint(*m_bodies[0], *m_bodies[1 + 3 * i], pivotA15, pivotB15, axisA15, axisB15);
-                hingeC15->setLimit(-M_PI_2, -M_PI_2);//setLimit(-2 * M_PI / 3, -M_PI_4);//setLimit(3 * M_PI / 2, 3 * M_PI / 2);//setLimit(4 * M_PI / 3, 3 * M_PI / 2);
-                //hingeC12->setLimit(3 * M_PI / 2, 3 * M_PI / 2);//4*PI/3
+                hingeC15->setLimit(-M_PI_2, -M_PI_2);
                 m_joints[3 * i] = hingeC15;
                 m_ownerWorld->addConstraint(m_joints[3 * i], true);
                 /********************************************************************************************************/
                 // knee joints //
                 pivotA16 = btVector3(btScalar(0.0f), btScalar(fPreLegLength), btScalar(0.0f));
                 pivotB16 = btVector3(btScalar(0.0f), btScalar(-fLegLength), btScalar(0.0f));
-                btVector3 axisA16 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(-1.0f));//change sign
-                btVector3 axisB16 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));//setAxis('x');
+                btVector3 axisA16 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(-1.0f));
+                btVector3 axisB16 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));
                 
                 btHingeConstraint* hingeC16 = new btHingeConstraint(*m_bodies[1 + 3 * i], *m_bodies[2 + 3 * i], pivotA16, pivotB16, axisA16, axisB16);
                 hingeC16->setLimit(-M_PI_8, -M_PI_8);
-                //hingeC13->setLimit(-M_PI_8, M_PI_8);
                 m_joints[1 + 3 * i] = hingeC16;
                 m_ownerWorld->addConstraint(m_joints[1 + 3 * i], true);
                 /********************************************************************************************************/
@@ -692,8 +668,7 @@ public:
                 btVector3 axisB17 = btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(1.0f));//setAxis('x');
                 
                 btHingeConstraint* hingeC17 = new btHingeConstraint(*m_bodies[2 + 3 * i], *m_bodies[3 + 3 * i], pivotA17, pivotB17, axisA17, axisB17);
-                hingeC17->setLimit(M_PI_2, M_PI_2);//setLimit(M_PI_2, 2 * M_PI / 3);//setLimit(M_PI_4, 2 * M_PI_4);//(-2 * M_PI_4, -M_PI_4);
-                //hingeC14->setLimit(M_PI_2, 2 * M_PI / 3);
+                hingeC17->setLimit(M_PI_2, M_PI_2);
                 m_joints[2 + 3 * i] = hingeC17;
                 m_ownerWorld->addConstraint(m_joints[2 + 3 * i], true);
             }
@@ -705,7 +680,7 @@ public:
         {
             m_bodies[i]->setDamping(0.05, 0.85);
             m_bodies[i]->setDeactivationTime(0.8);
-            m_bodies[i]->setSleepingThresholds(0.5f, 0.5f);//1.6, 2.5
+            m_bodies[i]->setSleepingThresholds(0.5f, 0.5f);
         }
         
     }
