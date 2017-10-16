@@ -44,7 +44,8 @@ enum States
     turnRight,
     standby,
     up,
-    down
+    down,
+    dancing
 };
 
 
@@ -83,7 +84,7 @@ public: Stage (int* hinges, Limits* limits, States direction)
         this->direction = direction;
     }
     
-~Stage() {}
+    ~Stage() {}
     
 public: int* getHinges()
     {
@@ -309,7 +310,7 @@ public:
                 pivotA0 = btVector3 (btScalar(0.0f), btScalar(0.0f), btScalar(-fBodySize.getZ()));
                 pivotB0 = btVector3 (btScalar(0.0f), btScalar(fPreLegLength), btScalar(0.0f));
                 btVector3 axisA0 = btVector3(btScalar(0.0f), btScalar(-1.0f), btScalar(0.0f));
-				btVector3 axisB0 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));
+                btVector3 axisB0 = btVector3(btScalar(1.0f), btScalar(0.0f), btScalar(0.0f));
                 
                 btHingeConstraint* hingeC0 = new btHingeConstraint(*m_bodies[3 * i], *m_bodies[1 + 3 * i], pivotA0, pivotB0, axisA0, axisB0);
                 hingeC0->setLimit(-M_PI_2, -M_PI_2);
@@ -349,8 +350,8 @@ public:
                 transform.setOrigin(origin11);
                 
                 btVector3 vToBone11 = (origin11 - vRoot).normalize();
-                btVector3 vAxis11 = vToBone11.cross(vUp); 
-                transform.setRotation(btQuaternion(vAxis11, M_PI_2)); 
+                btVector3 vAxis11 = vToBone11.cross(vUp);
+                transform.setRotation(btQuaternion(vAxis11, M_PI_2));
                 m_bodies[1 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[1 + 3 * i]);
                 /********************************************************************************************************/
                 btVector3 origin21 = btVector3((-fBodySize.getX() - (fPreLegLength)*cos(fAngle) - (fLegLength)*cos(fAngle)), fHeight, (-fBodySize.getZ() - (fPreLegLength)*sin(fAngle) - (fLegLength)*sin(fAngle)));
@@ -426,7 +427,7 @@ public:
                 transform.setOrigin(origin22);
                 
                 btVector3 vToBone22 = (origin22 - vRoot).normalize();
-                btVector3 vAxis22 = vToBone22.cross(vUp); 
+                btVector3 vAxis22 = vToBone22.cross(vUp);
                 transform.setRotation(btQuaternion(vAxis22, M_PI_2));
                 m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
                 /********************************************************************************************************/
@@ -547,7 +548,7 @@ public:
                 btVector3 vAxis14 = vToBone14.cross(vUp);
                 transform.setRotation(btQuaternion(vAxis14, M_PI_2));
                 m_bodies[1 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[1 + 3 * i]);
-
+                
                 /********************************************************************************************************/
                 btVector3 origin24 = btVector3( -fBodySize.getX() - fPreLegLength*cos(fAngle) - fLegLength*cos(fAngle),
                                                fHeight,
@@ -624,8 +625,8 @@ public:
                 transform.setOrigin(origin25);
                 
                 btVector3 vToBone25 = (origin25 - vRoot).normalize();
-                btVector3 vAxis25 = vToBone25.cross(vUp); 
-                transform.setRotation(btQuaternion(vAxis25, M_PI_2)); 
+                btVector3 vAxis25 = vToBone25.cross(vUp);
+                transform.setRotation(btQuaternion(vAxis25, M_PI_2));
                 m_bodies[2 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[2 + 3 * i]);
                 /********************************************************************************************************/
                 btVector3 origin35 =(btVector3(fBodySize.getX() + fPreLegLength*cos(fAngle) + fLegLength*cos(fAngle) + (fForeLegLength / 2)*cos(fAngle),
@@ -635,7 +636,7 @@ public:
                 transform.setOrigin(origin35);
                 
                 btVector3 vToBone35 = (origin35 - vRoot).normalize();
-                btVector3 vAxis35 = vToBone35.cross(vUp); 
+                btVector3 vAxis35 = vToBone35.cross(vUp);
                 m_bodies[3 + 3 * i] = localCreateRigidBody(btScalar(1.), offset*transform, m_shapes[3 + 3 * i]);
                 /********************************************************************************************************/
                 // setup constraints
@@ -948,6 +949,76 @@ void MotorDemo::setMotorTargets(btScalar deltaTime)
             direction = States::standby;
         } //  if (direction == State::up)
         
+        if (direction == States::dancing)
+        {
+            if ((int) time_passed %2 == 0)
+            {
+                // raising legs
+                for (int r = 0; r<m_rigs.size(); r++)
+                {
+                    for (int i=1; i<17; i+=3)
+                    {
+                        if (i==1 || i==10)
+                        {
+                            btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[i]);
+                            hingeC->setLimit(M_PI_8, M_PI_8);
+                        }
+                        
+                        else
+                        {
+                            btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[i]);
+                            hingeC->setLimit(-M_PI_8, -M_PI_8);
+                        }
+                    } // i cycle
+                    
+                    for (int i=0; i<16; i+=3)
+                    {
+                        btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[i]);
+                        if (i!=3 && i!=12)
+                            hingeC->setLimit(-M_PI_2, -M_PI_2);
+                        else
+                            hingeC->setLimit(-M_PI_4, -M_PI_4);
+                    } // i cycle
+                    
+                } // r cycle
+                isfinishedStage = false;
+            }
+            
+            else
+            {
+                // raising legs
+                for (int r = 0; r<m_rigs.size(); r++)
+                {
+                    for (int i=1; i<17; i+=3)
+                    {
+                        if (i==1 || i==10)
+                        {
+                            btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[i]);
+                            hingeC->setLimit(-M_PI_8, -M_PI_8);
+                        }
+                        else
+                        {
+                            btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[i]);
+                            hingeC->setLimit(M_PI_8, M_PI_8);
+                            
+                        }
+                        
+                    } // i cycle
+                    
+                    for (int i=0; i<16; i+=3)
+                    {
+                        btHingeConstraint* hingeC = static_cast<btHingeConstraint*>(m_rigs[r]->GetJoints()[i]);
+                        if (i!=3 && i!=12)
+                            hingeC->setLimit(-M_PI_2, -M_PI_2);
+                        else
+                            hingeC->setLimit(-M_PI_4, -M_PI_4);
+                    } // i cycle
+                    
+                }
+                
+                isfinishedStage = true;
+            }
+        }
         
         else  if (direction != States::standby)
         {
@@ -1119,6 +1190,14 @@ void MotorDemo::keyboardCallback(unsigned char key, int x, int y)
             break;
         }
             
+        case B3G_ALT:
+        {
+            std::cout<<"Dancing "<<std::endl;
+            direction = States::dancing;
+            handled = true;
+            break;
+        }
+            
         default:
             // DemoApplication::specialKeyboard(key,x,y);
             break;
@@ -1199,6 +1278,14 @@ void MotorDemo::specialKeyboard(int key, int x, int y)
                 break;
             }
                 
+            case B3G_ALT:
+            {
+                std::cout<<"Dancing "<<std::endl;
+                direction = States::dancing;
+                handled = true;
+                break;
+            }
+                
             default:
                 // DemoApplication::specialKeyboard(key,x,y);
                 break;
@@ -1271,6 +1358,14 @@ bool MotorDemo::keyboardCallback(int key, int state)
             {
                 std::cout<<"Down "<<std::endl;
                 direction = States::down;
+                handled = true;
+                break;
+            }
+                
+            case B3G_ALT:
+            {
+                std::cout<<"Dancing "<<std::endl;
+                direction = States::dancing;
                 handled = true;
                 break;
             }
