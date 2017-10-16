@@ -803,8 +803,10 @@ void MotorDemo::initPhysics()
     Limits forward_limits_7_10_4__16_1_13[3] = {limits_1, limits_1, limits_1}; // 7 10 4  16 1 13
     Limits backward_limits_7_10_4__16_1_13[3] = {limits_2, limits_2, limits_2}; // 7 10 4  16 1 13
     
-    Limits left_limits_limits_6_9_3[3] = {limits_4, limits_0, limits_4}; // 6 9 3 left
+    Limits left1_limits_limits_6_9_3[3] = {limits_4, limits_0, limits_4}; // 6 9 3 left
     Limits left2_limits_limits_15_0_12[3] = {limits_0, limits_4, limits_0}; // 15 0 12 left
+    Limits right1_limits_limits_6_9_3[3] = {limits_0, limits_4, limits_0}; // 6 9 3 right
+    Limits right2_limits_limits_15_0_12[3] = { limits_4, limits_0, limits_4}; // 15 0 12 right
     
     //forward
     stagesForward[0] = Stage (joints_7_10_4, forward_limits_7_10_4__16_1_13, States::forward);
@@ -830,21 +832,21 @@ void MotorDemo::initPhysics()
     stagesTurningLeft[0] = Stage (joints_7_10_4, backward_limits_7_10_4__16_1_13, States::forward);
     stagesTurningLeft[1] = Stage (joints_16_1_13, forward_limits_7_10_4__16_1_13, States::backward);
     stagesTurningLeft[2] = Stage (joints_15_0_12, left2_limits_limits_15_0_12, States::backward);
-    stagesTurningLeft[3] = Stage (joints_6_9_3, left_limits_limits_6_9_3, States::forward);
+    stagesTurningLeft[3] = Stage (joints_6_9_3, left1_limits_limits_6_9_3, States::forward);
     stagesTurningLeft[4] = Stage (joints_16_1_13, forward_limits_7_10_4__16_1_13, States::forward);
     stagesTurningLeft[5] = Stage (joints_7_10_4, backward_limits_7_10_4__16_1_13, States::backward);
-    stagesTurningLeft[6] = Stage (joints_6_9_3, left_limits_limits_6_9_3, States::backward);
+    stagesTurningLeft[6] = Stage (joints_6_9_3, left1_limits_limits_6_9_3, States::backward);
     stagesTurningLeft[7] = Stage (joints_15_0_12, left2_limits_limits_15_0_12, States::forward);
     
     // turning right
     stagesTurningRight[0] = Stage (joints_7_10_4, forward_limits_7_10_4__16_1_13, States::forward);
     stagesTurningRight[1] = Stage (joints_16_1_13, backward_limits_7_10_4__16_1_13, States::backward);
-    stagesTurningRight[2] = Stage (joints_15_0_12, forward_limits_6_9_3__15_0_12, States::backward);
-    stagesTurningRight[3] = Stage (joints_6_9_3, forward_limits_6_9_3__15_0_12, States::forward);
+    stagesTurningRight[2] = Stage (joints_15_0_12, right2_limits_limits_15_0_12, States::backward);
+    stagesTurningRight[3] = Stage (joints_6_9_3, right1_limits_limits_6_9_3, States::forward);
     stagesTurningRight[4] = Stage (joints_16_1_13, backward_limits_7_10_4__16_1_13, States::forward);
     stagesTurningRight[5] = Stage (joints_7_10_4, forward_limits_7_10_4__16_1_13, States::backward);
-    stagesTurningRight[6] = Stage (joints_6_9_3, forward_limits_6_9_3__15_0_12, States::backward);
-    stagesTurningRight[7] = Stage (joints_15_0_12, forward_limits_6_9_3__15_0_12, States::forward);
+    stagesTurningRight[6] = Stage (joints_6_9_3, right1_limits_limits_6_9_3, States::backward);
+    stagesTurningRight[7] = Stage (joints_15_0_12, right2_limits_limits_15_0_12, States::forward);
     
     current_stage = 0;
 }
