@@ -1,8 +1,59 @@
+# Hexapod Simulation
 
-[![Travis Build Status](https://api.travis-ci.org/bulletphysics/bullet3.png?branch=master)](https://travis-ci.org/bulletphysics/bullet3)
-[![Appveyor Build status](https://ci.appveyor.com/api/projects/status/6sly9uxajr6xsstq)](https://ci.appveyor.com/project/erwincoumans/bullet3)
+## Project description
+The main aim of this project was to create a simulation of hexapod, based on the real  model. Simulation created under the constraints of actual servos mechanics and geometry. Virtual model works under physical constraints implemented as external forces and have collision detection. Elements of the model connected by the joints which represents a servos in the model.
+<p align="center">
+<img src="https://user-images.githubusercontent.com/12521579/31745970-50ee1440-b465-11e7-87bd-f8e1df59115c.png" width=50%>
+</p>
 
-# Bullet Physics SDK
+## Instruments
+Instruments used for implementation of this project include Bullet Physics Library SDK, C++ programming language and Microsoft Visual Studio/Apple XCode IDEs.
+
+## Creating the model
+To create a virtual model, we use simple rigid bodies which were provided by the Bullet SDK. For the main body we use object of class “btBoxShape” which represents a simple box, oriented in global space. Every leg of the model consists of three capsule shaped rigid bodies, oriented along “Y”-axis.
+
+## Setting up elements
+Every object created independently of others and needs to be placed correctly in accordance to position in the model. For the legs, we need to set initial position in accordance to position and parameters of the main body. Using origin vector, we set the initial position of the elements and for every next element we need to consider position and length of previous. For the setting origin and rotating rigid bodies, we use bullet class “btTransform”.
+<p align="center">
+<img src="https://user-images.githubusercontent.com/12521579/31746077-e4ef43d0-b465-11e7-8a45-b18cc06a44a2.png" width=60%>
+</p>
+
+## Joint structure
+We connect elements together using joints as analogs of actual servos of the real prototype. Every joint can move along one axis of rotation.
+Using pivot vectors, we can set the position of the joint, but we should consider the orientation of local coordinate axis for both elements we want to connect. Pivot vectors start from the centre of the element and should be directed opposite to each other.
+<p align="center">
+<img src="https://user-images.githubusercontent.com/12521579/31746118-1c7c2e4e-b466-11e7-9de3-db089a7a61cf.png" height="300">
+<img src="https://user-images.githubusercontent.com/12521579/31746151-3d71de0a-b466-11e7-8f51-11ca34a94eae.png" height="300">
+</p>
+
+As every element in the model has its own local coordinate system, for connecting two elements we need to consider orientation of these systems of coordinates. Limit angles are used to establish the amplitude of movement and level of freedom for the joint, they need to be set in accordance to position of both connected elements.
+
+## Movement
+For movement implementation, we created gait patterns for each type of movement. On the picture below depicted the main pattern of gait of hexapod which is used for forward movement, backward movement, turning left and turning right.
+
+<p align="center">
+<img src="https://user-images.githubusercontent.com/12521579/31747112-425174f8-b46b-11e7-9c7d-553c3147f537.png" height="130">
+</p>
+
+Moving the hexapod, we operate with joints, moving them from low limit to up limit and contra versa. As “movement pattern” we use tripod, which means that we are moving 3 legs in single moment of time.
+
+<p align="center">
+<img src="https://user-images.githubusercontent.com/12521579/31747079-1395896a-b46b-11e7-81d8-b5cebf777ba0.png" height="400">
+</p>
+
+Each stage of movement, which is stores in Stage object consists of 3 hinges, up and low limits for each hinge and direction. Movements schemes such as forward movement, backward movement, turning left and turning right we store in arrays of stage objects.
+Each type of gait we implemented has the similar pattern, the difference is only of limits, but this implementation of gait is plenty flexible and could be used as framework for further development and adding other types of gait, for example, dancing.
+
+## Controls & States
+Hexapod could be examined as Finite-state machine. It has 7 different states. In each moment of time it is in particular state and user can change it’s state by pressing buttons on keyboard. The current state is changes according this State diagram. 
+Hexapod start from the state of “Rising up” after which automatically comes to state “Standing by”. To store the current stage we created enumerator, which could be encapsulated by one of these 7 names of states. 
+
+<p align="center">
+<img src="https://user-images.githubusercontent.com/12521579/31747180-aaf0bd70-b46b-11e7-89a2-af394e1208ee.png" height="500">
+</p>
+
+
+## About Bullet Physics SDK and how to run the program
 
 This is the official C++ source code repository of the Bullet Physics SDK: real-time collision detection and multi-physics simulation for VR, games, visual effects, robotics, machine learning etc.
 
