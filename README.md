@@ -52,6 +52,19 @@ Hexapod start from the state of “Rising up” after which automatically comes 
 <img src="https://user-images.githubusercontent.com/12521579/31747180-aaf0bd70-b46b-11e7-89a2-af394e1208ee.png" height="500">
 </p>
 
+## Buttons
+* forward movement - UP
+* backward movement - DOWN
+* turn left - LEFT
+* turn right - RIGHT
+* stop - SHIFT
+* sit down - PAGE DOWN
+* stand up - PAGE UP
+* dancing - ALT
+
+## Video demo
+
+[Small demo](https://vimeo.com/238860791)
 
 ## About Bullet Physics SDK and how to run the program
 
